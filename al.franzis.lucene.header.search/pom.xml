@@ -1,0 +1,96 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>al.franzis</groupId>
+  <artifactId>lucene.header.search</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <!--
+  <packaging>jar</packaging>
+	-->
+  <name>lucene.header.search</name>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  
+  	<dependency>
+  		<groupId>org.apache.lucene</groupId>
+  		<artifactId>lucene-core</artifactId>
+  		<version>3.4.0</version>
+  	</dependency>
+  	
+  	<dependency>
+  		<groupId>org.apache.lucene</groupId>
+  		<artifactId>lucene-test-framework</artifactId>
+  		<version>3.4.0</version>
+  		<scope>test</scope>
+  	</dependency>
+  	
+  	<dependency>
+  		<groupId>org.apache.lucene</groupId>
+  		<artifactId>lucene-analyzers</artifactId>
+  		<version>3.4.0</version>
+  	</dependency>
+  	
+  </dependencies>
+  
+  <build>
+  <plugins>
+  
+  	<!--  
+  	<plugin>
+  		<groupId>org.codehaus.mojo</groupId>
+  		<artifactId>appassembler-maven-plugin</artifactId>
+  		<configuration>
+  			<extraJvmArguments>-Xmx128M</extraJvmArguments>
+  			<repositoryLayout>flat</repositoryLayout>
+  			<assembleDirectory>${build-directory}</assembleDirectory>
+  			<platforms>
+  				<platform>windows</platform>
+  				<platform>unix</platform>
+  			</platforms>
+  			<programs>
+  				<program>
+  					<mainClass>org.apache.lucene.demo.IndexFiles</mainClass>
+  					<name>IndexFiles</name>
+  				</program>
+  				<program>
+  					<mainClass>org.apache.lucene.demo.SearchFiles</mainClass>
+  					<name>SearchFiles</name>
+  				</program>
+  			</programs>
+  		</configuration>
+  	</plugin>
+  	-->
+  	<plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2.1</version>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+  	</plugin>
+  	
+  </plugins>
+  </build>
+  
+</project>
