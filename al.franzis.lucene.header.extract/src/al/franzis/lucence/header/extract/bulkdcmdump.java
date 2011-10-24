@@ -1,3 +1,5 @@
+package al.franzis.lucence.header.extract;
+
 import java.io.File;
 import java.io.FileOutputStream;
 

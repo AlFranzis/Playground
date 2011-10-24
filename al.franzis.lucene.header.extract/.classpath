@@ -2,8 +2,5 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/com.agfa.pacs.thirdparty.dcm4che2/lib/dcm4che-core.jar" sourcepath="/com.agfa.pacs.thirdparty.dcm4che2/docs/dcm4che-core.zip"/>
-	<classpathentry kind="lib" path="/com.agfa.pacs.thirdparty.slf4j/lib/slf4j-log4j12-1.0-rc3.jar"/>
-	<classpathentry kind="lib" path="/com.agfa.pacs.thirdparty.log4j/lib/log4j.jar" sourcepath="/com.agfa.pacs.thirdparty.log4j/lib/log4j-src.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
