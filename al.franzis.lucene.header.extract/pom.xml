@@ -1,0 +1,18 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>al.franzis</groupId>
+  <artifactId>lucene.header.extract</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <description>DICOM Header extraction</description>
+  
+  
+   <dependencies>
+        <dependency>
+          <groupId>dcm4che</groupId>
+          <artifactId>dcm4che-core</artifactId>
+          <version>0.0.0.1</version>
+          <scope>system</scope>
+          <systemPath>/home/alex/dev/git-repos/al.franzis.lucene.header.search/al.franzis.lucene.header.extract/lib/dcm4che-core.jar</systemPath>
+        </dependency>
+      </dependencies>
+</project>
