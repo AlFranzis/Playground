@@ -2,6 +2,7 @@ package al.franzis.lucence.header.extract;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 
 import org.dcm4che2.data.DicomObject;
 import org.dcm4che2.data.DicomObjectToStringParam;
@@ -9,32 +10,9 @@ import org.dcm4che2.data.Tag;
 import org.dcm4che2.io.DicomInputStream;
 import org.dcm4che2.io.StopTagInputHandler;
 
-//
-/////////////////////////////////////////////////////////////////
-//                 C O P Y R I G H T  (c) 2008                 //
-//    A G F A   H E A L T H C A R E   C O R P O R A T I O N    //
-//                    All Rights Reserved                      //
-/////////////////////////////////////////////////////////////////
-//
-//        THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF
-//                      AGFA CORPORATION
-//       The copyright notice above does not evidence any
-//      actual or intended publication of such source code.
-//
-/////////////////////////////////////////////////////////////////
-//
-
-/**
- * do a bulk header dump of all dicom files in the specified path
- * @author lmroz
- *
- */
 public class BulkDcmDump
 {
 
-    /**
-     * @param args
-     */
     public static void main(String[] args)
     {
         if (args.length!=2)
@@ -61,36 +39,7 @@ public class BulkDcmDump
         else
         {
             dumpDir(source, target, source.getAbsolutePath());
-            deleteOrphans(source, target, target.getAbsolutePath());
         }
-    }
-
-    /**
-     * @param source
-     * @param target
-     * @param absolutePath
-     */
-    private static void deleteOrphans(File source, File target,
-            String leadIn)
-    {
-        if (1==1)
-            return;
-        File[] files = target.listFiles();
-        for (File file : files)
-        {
-            if (file.isDirectory())
-                deleteOrphans(source, file, leadIn);
-            else
-            {
-                String name=file.getAbsolutePath().substring(leadIn.length()+1);
-                name=name.substring(0, name.length()-4);
-                File orig = new File(source, name);
-                if (!orig.exists())
-                    file.delete();
-            }
-        }
-        if (target.isDirectory() && target.listFiles().length==0)
-            target.delete();
     }
 
     /**
@@ -127,6 +76,10 @@ public class BulkDcmDump
             dis.setHandler(new StopTagInputHandler(Tag.PixelData));
             DicomObject dcm = dis.readDicomObject();
             dis.close();
+            
+            dumpDicomElement(dcm);
+            
+            
             if (!df.getParentFile().exists())
                 df.getParentFile().mkdirs();
             FileOutputStream fos=new FileOutputStream(df);
@@ -136,6 +89,11 @@ public class BulkDcmDump
         {
             System.out.println(e.getMessage());
         }
+    }
+    
+    private static void dumpDicomElement( DicomObject dicomObject )
+    {
+    	dicomObject.accept(new DicomVisitor(dicomObject, new ArrayList<Integer>()));
     }
 
 }
