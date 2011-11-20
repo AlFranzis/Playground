@@ -1,4 +1,4 @@
-package al.franzis.lucene;
+package al.franzis.lucene.header.search;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
