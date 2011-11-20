@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.dcm4che2.data.DicomElement;
 import org.dcm4che2.data.DicomObject;
+import org.dcm4che2.data.VR;
+import org.dcm4che2.iod.module.composite.PatientModule;
 
 public class DicomVisitor implements DicomObject.Visitor {
 	private static int MAX_VALUE_LENGTH = 500;
@@ -21,12 +23,11 @@ public class DicomVisitor implements DicomObject.Visitor {
 	
 	@Override
 	public boolean visit( DicomElement element ) {
-		
-		
-		
 		StringBuffer buf = new StringBuffer();
 		if( tags.contains( element.tag() )) {
 			element.toStringBuffer(buf, MAX_VALUE_LENGTH );
+		} else if ( element.vr() == VR.SQ) {
+			System.out.println("sequence");
 		}
 		else {
 			buf.append( dicomObject.nameOf(element.tag()) );

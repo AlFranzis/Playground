@@ -24,7 +24,15 @@
           <artifactId>dcm4che-core</artifactId>
           <version>0.0.0.1</version>
           <scope>system</scope>
-          <systemPath>${external.lib.directory}/dcm4che-core.jar</systemPath>
+          <systemPath>${external.lib.directory}/dcm4che-core-2.0.25.jar</systemPath>
+        </dependency>
+        
+        <dependency>
+          <groupId>dcm4che</groupId>
+          <artifactId>dcm4che-iod</artifactId>
+          <version>0.0.0.1</version>
+          <scope>system</scope>
+          <systemPath>${external.lib.directory}/dcm4che-iod-2.0.25.jar</systemPath>
         </dependency>
         
         <dependency>
