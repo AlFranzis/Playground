@@ -1,4 +1,4 @@
-package al.franzis.akka.tutorial;
+package al.franzis.akka.tutorial.actors;
 
 import akka.actor.UntypedActor;
 import al.franzis.akka.tutorial.messages.Result;

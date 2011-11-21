@@ -1,4 +1,4 @@
-package al.franzis.akka.tutorial;
+package al.franzis.akka.tutorial.actors;
 
 import java.util.concurrent.CountDownLatch;
 
