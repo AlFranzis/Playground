@@ -4,6 +4,11 @@ import akka.actor.UntypedActor;
 import al.franzis.akka.tutorial.messages.Result;
 import al.franzis.akka.tutorial.messages.Work;
 
+/**
+ * Worker Implementation.
+ * @author alex
+ *
+ */
 public class Worker extends UntypedActor {
 
 	public void onReceive(Object message) {
