@@ -12,6 +12,7 @@ import al.franzis.akka.tutorial.messages.Work;
 public class Worker extends UntypedActor {
 
 	public void onReceive(Object message) {
+		// switch on message type is quite ugly
 		if (message instanceof Work) {
 			Work work = (Work) message;
 

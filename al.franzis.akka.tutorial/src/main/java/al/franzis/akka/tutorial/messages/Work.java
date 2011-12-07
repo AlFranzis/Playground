@@ -1,5 +1,10 @@
 package al.franzis.akka.tutorial.messages;
 
+/**
+ * 
+ * @author alex
+ *
+ */
 public class Work {
 	private final int start;
 	private final int nrOfElements;
