@@ -21,6 +21,13 @@ public class Pi {
 		pi.calculate(4, 10000, 10000);
 	}
 	
+	/**
+	 * 
+	 * @param nrOfWorkers
+	 * @param nrOfElements
+	 * @param nrOfMessages
+	 * @throws Exception
+	 */
 	public void calculate(final int nrOfWorkers, final int nrOfElements,
 			final int nrOfMessages) throws Exception {
 
