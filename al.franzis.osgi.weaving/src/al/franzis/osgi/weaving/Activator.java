@@ -32,6 +32,15 @@ public class Activator implements BundleActivator {
 		if(simpleLogService != null)
 			simpleLogService.log("Yee ha, I'm logging!");
 		
+		int RUNS = 10000;
+		for ( int i = 0; i < RUNS; i++ )
+		{
+			Foo foo = new Foo();
+			foo.foobar();
+			Foo.foobar2();
+			
+		}
+		
 	}
 	
 	public void stop(BundleContext context) throws Exception {

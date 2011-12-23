@@ -1,19 +1,49 @@
 package al.franzis.osgi.weaving;
 
+import javassist.ByteArrayClassPath;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtMethod;
+
 import org.osgi.framework.hooks.weaving.WeavingHook;
 import org.osgi.framework.hooks.weaving.WovenClass;
-import org.osgi.framework.wiring.BundleWiring;
 
 public class MyWeavingHook implements WeavingHook {
-
+	
 	@Override
 	public void weave(WovenClass wovenClass) {
-		System.out.println("WEAVING " + wovenClass.getClassName());
-		BundleWiring wiring = wovenClass.getBundleWiring();
-		
-		
+		String className = wovenClass.getClassName();
+		if (className.contains("Foo")) {
+			System.out.println("WEAVING " + className);
 
-		
+			try {
+				// load class bytecode
+				byte[] byteCode = wovenClass.getBytes();
+				ClassPool cp = ClassPool.getDefault();
+				cp.insertClassPath(new ByteArrayClassPath(className, byteCode));
+				CtClass ctClass = cp.get(className);
+				
+				CtMethod[] declaredMethods = ctClass.getDeclaredMethods();
+				for ( CtMethod ctMethod : declaredMethods )
+				{
+					if ( ctMethod.hasAnnotation(Profile.class) )
+					{
+						ctMethod.insertBefore("System.out.println(\"before() called\");");
+						ctMethod.insertAfter("System.out.println(\"after() called\");");
+					}
+				}
+				
+				// write modified (instrumented) bytecode
+				if ( ctClass.isModified() )
+				{
+					byte[] instrumentedByteCode = ctClass.toBytecode();
+					wovenClass.setBytes(instrumentedByteCode);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+			
 	}
 
 }
