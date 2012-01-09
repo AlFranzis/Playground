@@ -15,7 +15,7 @@ public class TypedPi {
 	 */
 	public static void main(String[] args) throws Exception {
 		TypedPi pi = new TypedPi();
-		pi.calculate(4, 100, 100);
+		pi.calculate(4, 10000, 10000);
 	}
 	
 	public void calculate(final int nrOfWorkers, final int nrOfElements,

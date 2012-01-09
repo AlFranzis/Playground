@@ -1,9 +1,10 @@
 package al.franzis.akka.tutorial.messages;
 
 /**
+ * Message sent from Master to Worker(s) to request a partial
+ * calculation of Pi.
  * 
  * @author alex
- *
  */
 public class Work {
 	private final int start;

@@ -1,14 +1,16 @@
 package al.franzis.akka.tutorial.typedactors;
 
-import static java.util.Arrays.asList;
+import static akka.actor.Actors.actorOf;
 
 import java.util.concurrent.CountDownLatch;
 
 import akka.actor.ActorRef;
+import akka.actor.Actors;
 import akka.actor.TypedActor;
-import akka.routing.CyclicIterator;
-import akka.routing.InfiniteIterator;
-import akka.routing.UntypedLoadBalancer;
+import akka.actor.UntypedActor;
+import akka.actor.UntypedActorFactory;
+import akka.routing.Routing.Broadcast;
+import al.franzis.akka.tutorial.actors.routing.PiRouter;
 import al.franzis.akka.tutorial.messages.Calculate;
 import al.franzis.akka.tutorial.messages.Result;
 import al.franzis.akka.tutorial.messages.Work;
@@ -22,24 +24,13 @@ public class MasterImpl extends TypedActor implements IMaster {
 	private double pi;
 	private int nrOfResults;
 	private long start;
-	
+
 	private IWorker[] workers;
 
 	private ActorRef router;
-	
-	static class PiRouter extends UntypedLoadBalancer {
-		private final InfiniteIterator<ActorRef> workers;
 
-		public PiRouter(ActorRef[] workers) {
-			this.workers = new CyclicIterator<ActorRef>(asList(workers));
-		}
-
-		public InfiniteIterator<ActorRef> seq() {
-			return workers;
-		}
-	}
-	
-	public MasterImpl(int nrOfWorkers, int nrOfMessages, int nrOfElements, CountDownLatch latch) {
+	public MasterImpl(int nrOfWorkers, int nrOfMessages, int nrOfElements,
+			CountDownLatch latch) {
 		this.nrOfMessages = nrOfMessages;
 		this.nrOfElements = nrOfElements;
 		this.nrOfWorkers = nrOfWorkers;
@@ -48,33 +39,51 @@ public class MasterImpl extends TypedActor implements IMaster {
 		// create the workers
 		workers = new IWorker[nrOfWorkers];
 		for (int i = 0; i < nrOfWorkers; i++) {
-			IWorker worker = (IWorker)TypedActor.newInstance(IWorker.class, WorkerImpl.class);
+			IWorker worker = (IWorker) TypedActor.newInstance(IWorker.class,
+					WorkerImpl.class);
 			workers[i] = worker;
 		}
 
+		// wrap them with a load-balancing router
+		router = actorOf(new UntypedActorFactory() {
+			public UntypedActor create() {
+				return new PiRouter(workers);
+			}
+		}).start();
+
 	}
-	
+
 	@Override
 	public void triggerCalculation(Calculate calculate) {
 		// schedule work
 		for (int start = 0; start < nrOfMessages; start++) {
 			IWorker worker = workers[start % nrOfWorkers];
 			Result result = worker.doWork(new Work(start, nrOfElements));
-			
+
 			pi += result.getValue();
 			nrOfResults += 1;
+			
+			// after sending messages to worker
+			// -> stop master
 			if (nrOfResults == nrOfMessages)
-				TypedActor.stop(worker);
+				getContext().actorRef().stop();
 		}
+
+		// send a PoisonPill to all workers telling them to shut down
+		// themselves
+		router.tell(new Broadcast(Actors.poisonPill()));
+
+		// send a PoisonPill to the router, telling him to shut himself down
+		router.tell(Actors.poisonPill());
+
 		
-		TypedActor.stop(this);
 	}
 
 	@Override
 	public void receiveResult(Result result) {
-		
+
 	}
-	
+
 	@Override
 	public void preStart() {
 		start = System.currentTimeMillis();
@@ -86,7 +95,7 @@ public class MasterImpl extends TypedActor implements IMaster {
 		System.out.println(String.format(
 				"\n\tPi estimate: \t\t%s\n\tCalculation time: \t%s millis", pi,
 				(System.currentTimeMillis() - start)));
-		
+
 		latch.countDown();
 	}
 

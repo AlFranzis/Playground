@@ -13,6 +13,7 @@ import akka.routing.CyclicIterator;
 import akka.routing.InfiniteIterator;
 import akka.routing.UntypedLoadBalancer;
 import akka.routing.Routing.Broadcast;
+import al.franzis.akka.tutorial.actors.routing.PiRouter;
 import al.franzis.akka.tutorial.messages.Calculate;
 import al.franzis.akka.tutorial.messages.Result;
 import al.franzis.akka.tutorial.messages.Work;
@@ -27,18 +28,6 @@ public class Master extends UntypedActor {
 	private long start;
 
 	private ActorRef router;
-
-	static class PiRouter extends UntypedLoadBalancer {
-		private final InfiniteIterator<ActorRef> workers;
-
-		public PiRouter(ActorRef[] workers) {
-			this.workers = new CyclicIterator<ActorRef>(asList(workers));
-		}
-
-		public InfiniteIterator<ActorRef> seq() {
-			return workers;
-		}
-	}
 
 	public Master(int nrOfWorkers, int nrOfMessages, int nrOfElements, CountDownLatch latch) {
 		this.nrOfMessages = nrOfMessages;
