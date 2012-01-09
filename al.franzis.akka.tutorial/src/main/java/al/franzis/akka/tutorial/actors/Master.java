@@ -1,17 +1,13 @@
 package al.franzis.akka.tutorial.actors;
 
-import java.util.concurrent.CountDownLatch;
-
 import static akka.actor.Actors.actorOf;
 import static akka.actor.Actors.poisonPill;
-import static java.util.Arrays.asList;
+
+import java.util.concurrent.CountDownLatch;
 
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import akka.actor.UntypedActorFactory;
-import akka.routing.CyclicIterator;
-import akka.routing.InfiniteIterator;
-import akka.routing.UntypedLoadBalancer;
 import akka.routing.Routing.Broadcast;
 import al.franzis.akka.tutorial.actors.routing.PiRouter;
 import al.franzis.akka.tutorial.messages.Calculate;
