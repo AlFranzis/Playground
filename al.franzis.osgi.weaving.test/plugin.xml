@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="TestingMethodHandler"
+         point="al.franzis.osgi.weaving.MethodInvocationHandlerProvider">
+      <definition
+            class="al.franzis.osgi.weaving.test.AOPMethodHandler"
+            classMatcher="al.franzis.osgi.weaving.test.AOPClassMatcher"
+            methodMatcher="al.franzis.osgi.weaving.test.AOPMethodMatcher">
+      </definition>
+   </extension>
+
+</plugin>
