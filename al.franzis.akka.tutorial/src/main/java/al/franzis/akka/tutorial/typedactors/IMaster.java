@@ -5,7 +5,9 @@ import al.franzis.akka.tutorial.messages.Result;
 
 public interface IMaster {
 	
-	public void triggerCalculation(Calculate calculate);
+	public void triggerSyncCalculation(Calculate calculate);
+	
+	public void triggerAsyncCalculation(Calculate calculate);
 	
 	public void receiveResult(Result result);
 }

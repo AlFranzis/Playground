@@ -20,7 +20,7 @@ public class Worker extends UntypedActor {
 			double result = calculatePiFor(work.getStart(),
 					work.getNrOfElements());
 
-			// reply with the result
+			// reply to the sender with the result
 			getContext().reply(new Result(result));
 
 		} else

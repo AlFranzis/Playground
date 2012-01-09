@@ -9,7 +9,7 @@ import akka.actor.UntypedActor;
 import akka.actor.UntypedActorFactory;
 import al.franzis.akka.tutorial.messages.Calculate;
 
-public class Pi {
+public class PiApplication {
 	
 	/**
 	 * Bootstrap application
@@ -17,7 +17,7 @@ public class Pi {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		Pi pi = new Pi();
+		PiApplication pi = new PiApplication();
 		pi.calculate(4, 10000, 10000);
 	}
 	

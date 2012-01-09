@@ -36,7 +36,7 @@ public class MasterImpl extends TypedActor implements IMaster {
 		this.nrOfWorkers = nrOfWorkers;
 		this.latch = latch;
 
-		// create the workers
+		// create the worker actors and start them
 		workers = new IWorker[nrOfWorkers];
 		for (int i = 0; i < nrOfWorkers; i++) {
 			IWorker worker = (IWorker) TypedActor.newInstance(IWorker.class,
@@ -54,11 +54,13 @@ public class MasterImpl extends TypedActor implements IMaster {
 	}
 
 	@Override
-	public void triggerCalculation(Calculate calculate) {
+	public void triggerSyncCalculation(Calculate calculate) {
 		// schedule work
 		for (int start = 0; start < nrOfMessages; start++) {
 			IWorker worker = workers[start % nrOfWorkers];
-			Result result = worker.doWork(new Work(start, nrOfElements));
+			
+			Work work = new Work(start, nrOfElements);
+			Result result = worker.executeWorkSynchronous(work);
 
 			pi += result.getValue();
 			nrOfResults += 1;
@@ -78,10 +80,34 @@ public class MasterImpl extends TypedActor implements IMaster {
 
 		
 	}
+	
+	@Override
+	public void triggerAsyncCalculation(Calculate calculate) {
+		// schedule work
+		for (int start = 0; start < nrOfMessages; start++) {
+			IWorker worker = workers[start % nrOfWorkers];
+			
+			Work work = new Work(start, nrOfElements);
+			worker.scheduleWorkAsynchronous(work);
+		}
+
+		// send a PoisonPill to all workers telling them to shut down
+		// themselves
+		router.tell(new Broadcast(Actors.poisonPill()));
+
+		// send a PoisonPill to the router, telling him to shut himself down
+		router.tell(Actors.poisonPill());
+
+		
+	}
 
 	@Override
 	public void receiveResult(Result result) {
-
+		// handle result from the worker
+		pi += result.getValue();
+		nrOfResults += 1;
+		if (nrOfResults == nrOfMessages)
+			getContext().actorRef().stop();
 	}
 
 	@Override

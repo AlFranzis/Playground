@@ -16,11 +16,11 @@ public class PiRouter extends UntypedLoadBalancer {
 	}
 	
 	public PiRouter(IWorker[] workers) {
-		
 		ActorRef[] actorRefs = new ActorRef[workers.length];
 		for( int i = 0; i < workers.length; i++ ) {
 			actorRefs[i] = TypedActor.actorFor(workers[i]).get();
 		}
+		
 		this.workers = new CyclicIterator<ActorRef>(asList(actorRefs));
 	}
 

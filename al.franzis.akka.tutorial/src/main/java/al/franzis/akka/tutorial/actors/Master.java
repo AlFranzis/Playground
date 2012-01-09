@@ -30,7 +30,7 @@ public class Master extends UntypedActor {
 		this.nrOfElements = nrOfElements;
 		this.latch = latch;
 
-		// create the workers
+		// create the worker actors and start them
 		final ActorRef[] workers = new ActorRef[nrOfWorkers];
 		for (int i = 0; i < nrOfWorkers; i++) {
 			workers[i] = actorOf(Worker.class).start();

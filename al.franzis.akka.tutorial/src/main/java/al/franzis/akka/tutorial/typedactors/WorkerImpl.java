@@ -1,5 +1,6 @@
 package al.franzis.akka.tutorial.typedactors;
 
+import scala.Some;
 import akka.actor.TypedActor;
 import al.franzis.akka.tutorial.messages.Result;
 import al.franzis.akka.tutorial.messages.Work;
@@ -7,10 +8,20 @@ import al.franzis.akka.tutorial.messages.Work;
 public class WorkerImpl extends TypedActor implements IWorker{
 
 	@Override
-	public Result doWork(Work work) {
+	public Result executeWorkSynchronous(Work work) {
 		// perform the work
 		double result = calculatePiFor(work.getStart(), work.getNrOfElements());
 		return new Result(result);
+	}
+	
+	@Override
+	public void scheduleWorkAsynchronous(Work work) {
+		// perform the work
+		double result = calculatePiFor(work.getStart(), work.getNrOfElements());
+		
+		Some<IMaster> someSendingMaster = (Some<IMaster>)getContext().getSender();
+		IMaster sender = someSendingMaster.get();
+		sender.receiveResult(new Result(result));
 	}
 	
 	private double calculatePiFor(int start, int nrOfElements) {
