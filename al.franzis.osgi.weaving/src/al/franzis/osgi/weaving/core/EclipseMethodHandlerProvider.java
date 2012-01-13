@@ -64,14 +64,15 @@ public class EclipseMethodHandlerProvider extends MethodHandlerProvider {
 			handlerDefinitions = new ArrayList<HandlerDefinition<CtClass,CtMethod>>(extensions.length);
 			handlers = new IMethodInvocationHandler[extensions.length];
 			
-			int i = 0;
-			for(IExtension extension : extensions) {
-				for(IConfigurationElement ce : extension.getConfigurationElements()) {
-					Matcher classMatcher = (Matcher)ce.createExecutableExtension("classMatcher");
-					Matcher methodMatcher = (Matcher)ce.createExecutableExtension("methodMatcher");
+			for(int i = 0; i < extensions.length; i++) {
+				for(IConfigurationElement ce : extensions[i].getConfigurationElements()) {
+					@SuppressWarnings("unchecked")
+					Matcher<CtClass> classMatcher = (Matcher<CtClass>)ce.createExecutableExtension("classMatcher");
+					@SuppressWarnings("unchecked")
+					Matcher<CtMethod> methodMatcher = (Matcher<CtMethod>)ce.createExecutableExtension("methodMatcher");
 					IMethodInvocationHandler handler = (IMethodInvocationHandler)ce.createExecutableExtension("class");
-					handlerDefinitions.add(new HandlerDefinition(0, i, classMatcher, methodMatcher, handler));
-					handlers[i++] = handler;
+					handlerDefinitions.add(new HandlerDefinition<CtClass,CtMethod>(0, i, classMatcher, methodMatcher, handler));
+					handlers[i] = handler;
 				}
 			}
 			

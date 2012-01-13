@@ -7,7 +7,7 @@ public class AOPClassMatcher implements Matcher<CtClass> {
 
 	@Override
 	public boolean matches(CtClass clazz) {
-		return "al.franzis.osgi.weaving.test.Foo".equals(clazz.getName());
+		return clazz.hasAnnotation(Profile.class);
 	}
 
 	@Override

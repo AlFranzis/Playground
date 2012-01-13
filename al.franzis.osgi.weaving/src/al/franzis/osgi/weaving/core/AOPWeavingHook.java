@@ -1,5 +1,7 @@
 package al.franzis.osgi.weaving.core;
 
+import static al.franzis.osgi.weaving.core.Constants.CORE_PACKAGE;
+
 import java.lang.reflect.Modifier;
 import java.util.List;
 
@@ -19,8 +21,11 @@ import org.osgi.framework.hooks.weaving.WeavingHook;
 import org.osgi.framework.hooks.weaving.WovenClass;
 
 public class AOPWeavingHook implements WeavingHook {
-	private static final String METHODS_ARRAY_NAME = "amethods";
-	private static final String HANDLER_FIELD_NAME = "handler";
+	private static final ThreadLocal<Boolean> threadInsideWeaving = new ThreadLocal<Boolean>() {
+		public Boolean initialValue() {
+			return Boolean.FALSE;
+		}
+	};
 	
 	private ClassPool classPool;
 	private CtClass methodHandlerCtClass;
@@ -28,48 +33,36 @@ public class AOPWeavingHook implements WeavingHook {
 	
 	private Matcher matcher;
 	
-	public AOPWeavingHook() {
-		
-	}
-	
+	public AOPWeavingHook() {}
 	
 	@Override
 	public void weave(WovenClass wovenClass) {
-		String className = wovenClass.getClassName();
-		
-//		System.out.println("Loading " + className);
-		
-		if (className.startsWith("org.eclipse") || className.startsWith("org.osgi") 
-				|| className.startsWith("javassist") || className.startsWith("al.franzis.osgi.weaving.core") )
-				return;
+		if(Boolean.TRUE == threadInsideWeaving.get())
+			return;
 		
 		try {
-			// load class bytecode
-			// byte[] byteCode = wovenClass.getBytes();
+			threadInsideWeaving.set(Boolean.TRUE);
+		
+			String className = wovenClass.getClassName();
+//			System.out.println("Loading " + className);
+		
+			if(skipClass(className))
+				return;
+			
 			if (classPool == null) {
 				classPool = ClassPool.getDefault();
 				classPool.insertClassPath(new ClassClassPath(MethodHandler.class));
-				// classPool.insertClassPath(new
-				// ClassClassPath(wovenClass.getDefinedClass()));
-				// classPool.insertClassPath(new ByteArrayClassPath(className,
-				// byteCode));
-
 				ClassLoader loader = wovenClass.getBundleWiring().getClassLoader();
 				classPool.insertClassPath(new LoaderClassPath(loader));
 
-				methodHandlerCtClass = classPool
-						.get(IMethodInvocationHandler.class.getName());
-				methodArrayCtClass = classPool
-						.get("java.lang.reflect.Method[]");
+				methodHandlerCtClass = classPool.get(IMethodInvocationHandler.class.getName());
+				methodArrayCtClass = classPool.get("java.lang.reflect.Method[]");
 			}
 
 			CtClass ctClass = classPool.get(className);
-			for(CtClass ctInterface : ctClass.getInterfaces())
-			{
-				if( ctInterface.getName().startsWith("al.franzis.osgi.weaving.core"))
-					return;
-			}
 			
+			if(skipInterface(ctClass))
+				return;
 			
 			if ( matcher == null )
 				matcher = new Matcher();
@@ -98,6 +91,8 @@ public class AOPWeavingHook implements WeavingHook {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			threadInsideWeaving.set(Boolean.FALSE);
 		}
 	}
 	
@@ -122,7 +117,7 @@ public class AOPWeavingHook implements WeavingHook {
 			createStaticHandlerInitializer(ctClass, handlerIndex);
 			
 			// add static methods array field 'amethods' that caches method-lookups using reflection
-			addStaticMethodsArrayField(ctClass, METHODS_ARRAY_NAME, methodCount);
+			addStaticMethodsArrayField(ctClass, Constants.METHODS_ARRAY_NAME, methodCount);
 		}
 		
 		// add forwarder method
@@ -137,8 +132,8 @@ public class AOPWeavingHook implements WeavingHook {
 		CtMethod forwarderMethod = CtNewMethod.copy(originalMethod, forwarderMethodName, ctClass, null);
 		
 		String handlerInvoke = null;
-		String arrayForwarderMethodCall = METHODS_ARRAY_NAME + "[" + (methodIndex+1) + "]";
-		String arrayOriginalMethodCall = METHODS_ARRAY_NAME + "[" + methodIndex + "]";
+		String arrayForwarderMethodCall = Constants.METHODS_ARRAY_NAME + "[" + (methodIndex+1) + "]";
+		String arrayOriginalMethodCall = Constants.METHODS_ARRAY_NAME + "[" + methodIndex + "]";
 		if( Modifier.isStatic(forwarderMethod.getModifiers())) 
 			handlerInvoke = "handler.invoke(null, " + arrayForwarderMethodCall + "," + arrayOriginalMethodCall + ", $args);";
 		else 
@@ -157,9 +152,9 @@ public class AOPWeavingHook implements WeavingHook {
 		String forwarderMethodBody = 
 				"{"
 				  + thisClassAssignment
-				  + "al.franzis.osgi.weaving.core.Helpers.find2Methods(thisClass,\"" 
+				  + CORE_PACKAGE + ".Helpers.find2Methods(thisClass,\"" 
 						+ originalMethodName + "\",\"" + forwarderMethodName + "\"," 
-						+ methodIndex + ",\"" + methodDescription + "\"," + METHODS_ARRAY_NAME + ");"
+						+ methodIndex + ",\"" + methodDescription + "\"," + Constants.METHODS_ARRAY_NAME + ");"
 				  + handlerInvoke
 				+"}";
 		forwarderMethod.setBody(forwarderMethodBody);
@@ -169,7 +164,7 @@ public class AOPWeavingHook implements WeavingHook {
 	
 	private void createStaticHandlerInitializer(CtClass ctClass, int handlerIndex) throws CannotCompileException {
 		CtConstructor staticInitializer = ctClass.makeClassInitializer();
-		staticInitializer.insertBefore( HANDLER_FIELD_NAME + " =  al.franzis.osgi.weaving.core.MethodHandlerProvider.getInstance().getHandler(" + handlerIndex + ");");
+		staticInitializer.insertBefore( Constants.HANDLER_FIELD_NAME + " =  " + CORE_PACKAGE + ".MethodHandlerProvider.getInstance().getHandler(" + handlerIndex + ");");
 	}
 	
 	private void addStaticMethodsArrayField(CtClass ctClass, String methodsArrayName, int declaredMethodsCount) throws CannotCompileException, NotFoundException {
@@ -179,7 +174,7 @@ public class AOPWeavingHook implements WeavingHook {
 	}
 	
 	private CtField createStaticHandlerField(CtClass ctClass, CtClass methodHandlerCtClass ) throws CannotCompileException {
-		CtField handlerCtField = new CtField(methodHandlerCtClass , HANDLER_FIELD_NAME, ctClass);
+		CtField handlerCtField = new CtField(methodHandlerCtClass , Constants.HANDLER_FIELD_NAME, ctClass);
 		handlerCtField.setModifiers(Modifier.STATIC);
 		return handlerCtField;
 	}
@@ -187,6 +182,20 @@ public class AOPWeavingHook implements WeavingHook {
 	private int getHandlerIndexForClass( String className )
 	{
 		return 0;
+	}
+	
+	private boolean skipClass(String classname) {
+		return (classname.startsWith("org.eclipse") || classname.startsWith("org.osgi") 
+				|| classname.startsWith("javassist") || classname.startsWith("al.franzis.osgi.weaving.core"));
+	}
+	
+	private static boolean skipInterface(CtClass ctClass) throws NotFoundException {
+		for(CtClass ctInterface : ctClass.getInterfaces())
+		{
+			if( ctInterface.getName().startsWith("al.franzis.osgi.weaving.core"))
+				return true;
+		}
+		return false;
 	}
 
 }
