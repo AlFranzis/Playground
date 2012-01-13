@@ -1,4 +1,4 @@
-package al.franzis.osgi.weaving;
+package al.franzis.osgi.weaving.core;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -11,8 +11,8 @@ public class Matcher {
 	private int handlerCount;
 	
 	public Matcher() {
-//		handlerDefinitions = MethodHandlerProvider.getInstance().getHandlerDefinitions().toArray(new HandlerDefinition[0]);
-//		handlerCount = handlerDefinitions.length;
+		handlerDefinitions = MethodHandlerProvider.getInstance().getHandlerDefinitions().toArray(new HandlerDefinition[0]);
+		handlerCount = handlerDefinitions.length;
 	}
 	
 	

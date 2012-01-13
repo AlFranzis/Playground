@@ -1,6 +1,6 @@
-package al.franzis.osgi.weaving;
+package al.franzis.osgi.weaving.core;
 
-import al.franzis.osgi.weaving.matching.Matcher;
+import al.franzis.osgi.weaving.core.matching.Matcher;
 
 public class HandlerDefinition<C,M> {
 	private final int order;

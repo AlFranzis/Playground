@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package al.franzis.osgi.weaving.matching;
+package al.franzis.osgi.weaving.core.matching;
 
 import java.util.Collection;
 import java.util.NoSuchElementException;

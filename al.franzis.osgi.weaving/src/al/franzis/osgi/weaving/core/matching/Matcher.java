@@ -1,4 +1,4 @@
-package al.franzis.osgi.weaving.matching;
+package al.franzis.osgi.weaving.core.matching;
 
 /**
  * Returns {@code true} or {@code false} for a given input.

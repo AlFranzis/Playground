@@ -1,8 +1,7 @@
 package al.franzis.osgi.weaving.test;
 
 import javassist.CtMethod;
-import al.franzis.osgi.weaving.Profile;
-import al.franzis.osgi.weaving.matching.Matcher;
+import al.franzis.osgi.weaving.core.matching.Matcher;
 
 public class AOPMethodMatcher implements Matcher<CtMethod> {
 

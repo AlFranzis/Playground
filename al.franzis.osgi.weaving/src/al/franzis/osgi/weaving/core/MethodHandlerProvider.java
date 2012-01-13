@@ -1,4 +1,4 @@
-package al.franzis.osgi.weaving;
+package al.franzis.osgi.weaving.core;
 
 import java.util.List;
 

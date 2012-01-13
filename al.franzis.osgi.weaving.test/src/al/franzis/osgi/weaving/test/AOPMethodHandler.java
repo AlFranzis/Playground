@@ -2,7 +2,7 @@ package al.franzis.osgi.weaving.test;
 
 import java.lang.reflect.Method;
 
-import al.franzis.osgi.weaving.IMethodInvocationHandler;
+import al.franzis.osgi.weaving.core.IMethodInvocationHandler;
 
 public class AOPMethodHandler implements IMethodInvocationHandler {
 

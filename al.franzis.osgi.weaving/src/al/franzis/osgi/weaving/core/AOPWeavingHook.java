@@ -1,4 +1,4 @@
-package al.franzis.osgi.weaving;
+package al.franzis.osgi.weaving.core;
 
 import java.lang.reflect.Modifier;
 import java.util.List;
@@ -35,15 +35,14 @@ public class AOPWeavingHook implements WeavingHook {
 	
 	@Override
 	public void weave(WovenClass wovenClass) {
-//		if ( matcher == null )
-//			matcher = new Matcher();
-		
 		String className = wovenClass.getClassName();
-
-		// System.out.println("Loading " + className);
-
-		boolean handlerDefined = false;
-
+		
+//		System.out.println("Loading " + className);
+		
+		if (className.startsWith("org.eclipse") || className.startsWith("org.osgi") 
+				|| className.startsWith("javassist") || className.startsWith("al.franzis.osgi.weaving.core") )
+				return;
+		
 		try {
 			// load class bytecode
 			// byte[] byteCode = wovenClass.getBytes();
@@ -65,20 +64,29 @@ public class AOPWeavingHook implements WeavingHook {
 			}
 
 			CtClass ctClass = classPool.get(className);
-
+			for(CtClass ctInterface : ctClass.getInterfaces())
+			{
+				if( ctInterface.getName().startsWith("al.franzis.osgi.weaving.core"))
+					return;
+			}
+			
+			
+			if ( matcher == null )
+				matcher = new Matcher();
+			
 			List<HandlerDefinition<CtClass, CtMethod>> matchingHandlers;
 			if ((matchingHandlers = matcher.match(ctClass)) != null) {
-
+				boolean handlerDefined = false;
 				int handlerIndex = getHandlerIndexForClass(className);
 				int methodIndex = 0;
 
 				CtMethod[] declaredMethods = ctClass.getDeclaredMethods();
 				int methodCount = declaredMethods.length;
 				for (CtMethod ctMethod : declaredMethods) {
-					if (ctMethod.hasAnnotation(Profile.class)) {
-
+					if(matchingHandlers.get(0).getMethodMatcher().matches(ctMethod)) {
 						instrumentMethod(ctClass, ctMethod, methodCount,
 								handlerIndex, methodIndex, handlerDefined);
+						handlerDefined = true;
 					}
 				}
 
@@ -115,8 +123,6 @@ public class AOPWeavingHook implements WeavingHook {
 			
 			// add static methods array field 'amethods' that caches method-lookups using reflection
 			addStaticMethodsArrayField(ctClass, METHODS_ARRAY_NAME, methodCount);
-			
-			handlerDefined = true;
 		}
 		
 		// add forwarder method
@@ -151,7 +157,7 @@ public class AOPWeavingHook implements WeavingHook {
 		String forwarderMethodBody = 
 				"{"
 				  + thisClassAssignment
-				  + "al.franzis.osgi.weaving.Helpers.find2Methods(thisClass,\"" 
+				  + "al.franzis.osgi.weaving.core.Helpers.find2Methods(thisClass,\"" 
 						+ originalMethodName + "\",\"" + forwarderMethodName + "\"," 
 						+ methodIndex + ",\"" + methodDescription + "\"," + METHODS_ARRAY_NAME + ");"
 				  + handlerInvoke
@@ -163,7 +169,7 @@ public class AOPWeavingHook implements WeavingHook {
 	
 	private void createStaticHandlerInitializer(CtClass ctClass, int handlerIndex) throws CannotCompileException {
 		CtConstructor staticInitializer = ctClass.makeClassInitializer();
-		staticInitializer.insertBefore( HANDLER_FIELD_NAME + " =  al.franzis.osgi.weaving.MethodHandlerProvider.getInstance().getHandler(" + handlerIndex + ");");
+		staticInitializer.insertBefore( HANDLER_FIELD_NAME + " =  al.franzis.osgi.weaving.core.MethodHandlerProvider.getInstance().getHandler(" + handlerIndex + ");");
 	}
 	
 	private void addStaticMethodsArrayField(CtClass ctClass, String methodsArrayName, int declaredMethodsCount) throws CannotCompileException, NotFoundException {

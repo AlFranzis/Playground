@@ -1,4 +1,4 @@
-package al.franzis.osgi.weaving;
+package al.franzis.osgi.weaving.core;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 
-import al.franzis.osgi.weaving.matching.Matcher;
+import al.franzis.osgi.weaving.core.matching.Matcher;
 
 public class EclipseMethodHandlerProvider extends MethodHandlerProvider {
 	private static final String METHOD_HANDLER_PROVIDER_EXTENSION_POINT = "al.franzis.osgi.weaving.MethodInvocationHandlerProvider";

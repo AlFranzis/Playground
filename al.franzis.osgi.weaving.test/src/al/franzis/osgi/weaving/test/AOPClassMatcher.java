@@ -1,7 +1,7 @@
 package al.franzis.osgi.weaving.test;
 
 import javassist.CtClass;
-import al.franzis.osgi.weaving.matching.Matcher;
+import al.franzis.osgi.weaving.core.matching.Matcher;
 
 public class AOPClassMatcher implements Matcher<CtClass> {
 

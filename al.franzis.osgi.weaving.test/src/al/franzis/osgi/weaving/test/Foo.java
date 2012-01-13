@@ -1,6 +1,5 @@
 package al.franzis.osgi.weaving.test;
 
-import al.franzis.osgi.weaving.Profile;
 
 
 public class Foo {

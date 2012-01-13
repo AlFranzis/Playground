@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package al.franzis.osgi.weaving.matching;
+package al.franzis.osgi.weaving.core.matching;
 
-import static al.franzis.osgi.weaving.matching.Preconditions.checkArgument;
-import static al.franzis.osgi.weaving.matching.Preconditions.checkNotNull;
+import static al.franzis.osgi.weaving.core.matching.Preconditions.checkArgument;
+import static al.franzis.osgi.weaving.core.matching.Preconditions.checkNotNull;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;

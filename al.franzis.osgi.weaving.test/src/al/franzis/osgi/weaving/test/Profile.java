@@ -1,4 +1,4 @@
-package al.franzis.osgi.weaving;
+package al.franzis.osgi.weaving.test;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
