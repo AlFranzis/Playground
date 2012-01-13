@@ -1,4 +1,4 @@
-package al.franzis.osgi.weaving.test;
+package al.franzis.osgi.weaving.test.a;
 
 import java.lang.reflect.Method;
 

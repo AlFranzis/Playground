@@ -5,9 +5,9 @@
          id="TestingMethodHandler"
          point="al.franzis.osgi.weaving.MethodInvocationHandlerProvider">
       <definition
-            class="al.franzis.osgi.weaving.test.AOPMethodHandler"
-            classMatcher="al.franzis.osgi.weaving.test.AOPClassMatcher"
-            methodMatcher="al.franzis.osgi.weaving.test.AOPMethodMatcher">
+            class="al.franzis.osgi.weaving.test.a.AOPMethodHandler"
+            classMatcher="al.franzis.osgi.weaving.test.a.AOPClassMatcher"
+            methodMatcher="al.franzis.osgi.weaving.test.a.AOPMethodMatcher">
       </definition>
    </extension>
 

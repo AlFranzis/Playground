@@ -1,4 +1,4 @@
-package al.franzis.osgi.weaving.test;
+package al.franzis.osgi.weaving.test.a;
 
 import javassist.CtMethod;
 import al.franzis.osgi.weaving.core.matching.Matcher;

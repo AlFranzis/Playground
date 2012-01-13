@@ -1,4 +1,4 @@
-package al.franzis.osgi.weaving.test;
+package al.franzis.osgi.weaving.test.a;
 
 import org.junit.Test;
 
