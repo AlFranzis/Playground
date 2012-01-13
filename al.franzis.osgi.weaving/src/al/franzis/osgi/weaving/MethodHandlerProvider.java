@@ -1,5 +1,10 @@
 package al.franzis.osgi.weaving;
 
+import java.util.List;
+
+import javassist.CtClass;
+import javassist.CtMethod;
+
 
 public abstract class MethodHandlerProvider {
 	private final static MethodHandlerProvider INSTANCE = new EclipseMethodHandlerProvider();
@@ -8,5 +13,9 @@ public abstract class MethodHandlerProvider {
 		return INSTANCE;
 	}
 	
+	public abstract List<HandlerDefinition<CtClass,CtMethod>> getHandlerDefinitions();
+	
 	public abstract IMethodInvocationHandler getHandler(int index);
+	
+	public abstract Integer[] getMatchingHandlersForClass(CtClass ctClass);
 }

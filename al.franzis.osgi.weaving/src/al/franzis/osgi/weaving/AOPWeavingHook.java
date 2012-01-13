@@ -1,6 +1,7 @@
 package al.franzis.osgi.weaving;
 
 import java.lang.reflect.Modifier;
+import java.util.List;
 
 import javassist.CannotCompileException;
 import javassist.ClassClassPath;
@@ -25,86 +26,104 @@ public class AOPWeavingHook implements WeavingHook {
 	private CtClass methodHandlerCtClass;
 	private CtClass methodArrayCtClass;
 	
+	private Matcher matcher;
+	
+	public AOPWeavingHook() {
+		
+	}
+	
 	
 	@Override
 	public void weave(WovenClass wovenClass) {
+//		if ( matcher == null )
+//			matcher = new Matcher();
+		
 		String className = wovenClass.getClassName();
-		
-//		System.out.println("Loading " + className);
-		
-		if (className.endsWith("Foo")) {
-			System.out.println("WEAVING " + className);
 
-			boolean handlerDefined = false;
-			
-			try {
-				// load class bytecode
-				byte[] byteCode = wovenClass.getBytes();
-				if ( classPool == null ) {
-					classPool = ClassPool.getDefault();
-					classPool.insertClassPath(new ClassClassPath(MethodHandler.class));
-//					classPool.insertClassPath(new ClassClassPath(wovenClass.getDefinedClass()));
-//					classPool.insertClassPath(new ByteArrayClassPath(className, byteCode));
+		// System.out.println("Loading " + className);
 
-					ClassLoader loader = wovenClass.getBundleWiring().getClassLoader();
-					classPool.insertClassPath(new LoaderClassPath(loader));
-					
-					methodHandlerCtClass = classPool.get(IMethodInvocationHandler.class.getName());
-					methodArrayCtClass = classPool.get("java.lang.reflect.Method[]");
-				}
-				
-				CtClass ctClass = classPool.get(className);
+		boolean handlerDefined = false;
+
+		try {
+			// load class bytecode
+			// byte[] byteCode = wovenClass.getBytes();
+			if (classPool == null) {
+				classPool = ClassPool.getDefault();
+				classPool.insertClassPath(new ClassClassPath(MethodHandler.class));
+				// classPool.insertClassPath(new
+				// ClassClassPath(wovenClass.getDefinedClass()));
+				// classPool.insertClassPath(new ByteArrayClassPath(className,
+				// byteCode));
+
+				ClassLoader loader = wovenClass.getBundleWiring().getClassLoader();
+				classPool.insertClassPath(new LoaderClassPath(loader));
+
+				methodHandlerCtClass = classPool
+						.get(IMethodInvocationHandler.class.getName());
+				methodArrayCtClass = classPool
+						.get("java.lang.reflect.Method[]");
+			}
+
+			CtClass ctClass = classPool.get(className);
+
+			List<HandlerDefinition<CtClass, CtMethod>> matchingHandlers;
+			if ((matchingHandlers = matcher.match(ctClass)) != null) {
+
 				int handlerIndex = getHandlerIndexForClass(className);
 				int methodIndex = 0;
-				
+
 				CtMethod[] declaredMethods = ctClass.getDeclaredMethods();
-				for ( CtMethod ctMethod : declaredMethods )
-				{
-					if ( ctMethod.hasAnnotation(Profile.class) )
-					{
-						String methodName = ctMethod.getName();
-						String delegatorName = "d" + methodName;
-						String methodDescription = Helpers.makeDescriptor(ctMethod);
-						
-						// rename original method
-						ctMethod.setName(delegatorName);
-						
-						if (!handlerDefined) {
+				int methodCount = declaredMethods.length;
+				for (CtMethod ctMethod : declaredMethods) {
+					if (ctMethod.hasAnnotation(Profile.class)) {
 
-							// add static 'handler' field
-							CtField handlerCtField = createStaticHandlerField(
-									ctClass, methodHandlerCtClass);
-							ctClass.addField(handlerCtField);
-
-							// add static initializer that assigns 'handler'
-							// field
-							createStaticHandlerInitializer(ctClass, handlerIndex);
-							
-							// add static methods array field 'amethods' that caches method-lookups using reflection
-							addStaticMethodsArrayField(ctClass, METHODS_ARRAY_NAME, declaredMethods.length);
-							
-							handlerDefined = true;
-						}
-						
-						// add forwarder method
-						CtMethod forwarderMethod = createForwarderMethod(ctClass, 
-								ctMethod, delegatorName, methodName, methodDescription, methodIndex);
-						ctClass.addMethod(forwarderMethod);
-						methodIndex += 2;
+						instrumentMethod(ctClass, ctMethod, methodCount,
+								handlerIndex, methodIndex, handlerDefined);
 					}
 				}
-				
+
 				// write modified (instrumented) bytecode
-				if ( ctClass.isModified() )
-				{
+				if (ctClass.isModified()) {
 					byte[] instrumentedByteCode = ctClass.toBytecode();
 					wovenClass.setBytes(instrumentedByteCode);
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+	}
+	
+	private void instrumentMethod(CtClass ctClass, CtMethod ctMethod, 
+			int methodCount, int handlerIndex, int methodIndex, boolean handlerDefined) throws NotFoundException, CannotCompileException {
+		String methodName = ctMethod.getName();
+		String delegatorName = "d" + methodName;
+		String methodDescription = Helpers.makeDescriptor(ctMethod);
+		
+		// rename original method
+		ctMethod.setName(delegatorName);
+		
+		if (!handlerDefined) {
+
+			// add static 'handler' field
+			CtField handlerCtField = createStaticHandlerField(
+					ctClass, methodHandlerCtClass);
+			ctClass.addField(handlerCtField);
+
+			// add static initializer that assigns 'handler'
+			// field
+			createStaticHandlerInitializer(ctClass, handlerIndex);
 			
+			// add static methods array field 'amethods' that caches method-lookups using reflection
+			addStaticMethodsArrayField(ctClass, METHODS_ARRAY_NAME, methodCount);
+			
+			handlerDefined = true;
+		}
+		
+		// add forwarder method
+		CtMethod forwarderMethod = createForwarderMethod(ctClass, 
+				ctMethod, delegatorName, methodName, methodDescription, methodIndex);
+		ctClass.addMethod(forwarderMethod);
+		methodIndex += 2;
 	}
 	
 	private CtMethod createForwarderMethod( CtClass ctClass, CtMethod originalMethod, 
