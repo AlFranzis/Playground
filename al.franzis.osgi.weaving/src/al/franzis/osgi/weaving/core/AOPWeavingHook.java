@@ -50,6 +50,7 @@ public class AOPWeavingHook implements WeavingHook {
 				return;
 			
 			if (classPool == null) {
+				ClassPool.doPruning = true;
 				classPool = ClassPool.getDefault();
 				classPool.insertClassPath(new ClassClassPath(MethodHandler.class));
 				ClassLoader loader = wovenClass.getBundleWiring().getClassLoader();
