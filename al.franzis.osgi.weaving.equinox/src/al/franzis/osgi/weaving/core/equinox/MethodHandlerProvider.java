@@ -17,5 +17,4 @@ public abstract class MethodHandlerProvider {
 	
 	public abstract IMethodInvocationHandler getHandler(int index);
 	
-	public abstract Integer[] getMatchingHandlersForClass(CtClass ctClass);
 }

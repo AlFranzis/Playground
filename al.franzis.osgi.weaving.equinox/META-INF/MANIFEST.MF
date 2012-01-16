@@ -7,6 +7,7 @@ Bundle-Vendor: AGFA
 Fragment-Host: org.eclipse.osgi
 Export-Package: al.franzis.osgi.weaving.core.equinox,
  al.franzis.osgi.weaving.core.equinox.hooks,
- al.franzis.osgi.weaving.core.equinox.matching
+ al.franzis.osgi.weaving.core.equinox.matching,
+ javassist
 Bundle-ClassPath: lib/javassist.jar,
  .

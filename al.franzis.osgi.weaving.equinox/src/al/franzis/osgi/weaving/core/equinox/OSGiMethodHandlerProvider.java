@@ -1,10 +1,10 @@
 package al.franzis.osgi.weaving.core.equinox;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javassist.CtClass;
 import javassist.CtMethod;
+import al.franzis.osgi.weaving.core.equinox.matching.Matcher;
 
 public class OSGiMethodHandlerProvider extends MethodHandlerProvider {
 	
@@ -15,7 +15,6 @@ public class OSGiMethodHandlerProvider extends MethodHandlerProvider {
 		
 	}
 	
-	
 	@Override
 	public IMethodInvocationHandler getHandler(int index) {
 		return handlers[0];
@@ -25,23 +24,10 @@ public class OSGiMethodHandlerProvider extends MethodHandlerProvider {
 		return handlerDefinitions;
 	}
 
-	@Override
-	public Integer[] getMatchingHandlersForClass(CtClass ctClass) {
-		if ( handlerDefinitions == null )
-			return null;
-		
-		List<Integer> matchingHandlerIndices = null; 
-		for( HandlerDefinition<CtClass,CtMethod> handlerDefinition : handlerDefinitions) {
-			
-			if (handlerDefinition.classMatcher.matches(ctClass) ) {
-				if ( matchingHandlerIndices == null )
-					matchingHandlerIndices = new ArrayList<Integer>();
-				
-				matchingHandlerIndices.add(handlerDefinition.getIndex());
-			}
-		}
-		
-		return matchingHandlerIndices.toArray(new Integer[0]);
-	}
 	
+	public void addHandlerDefinition( Matcher<CtClass> classMatcher, Matcher<CtMethod> methodMatcher, IMethodInvocationHandler handler) {
+		int i = 0;
+		handlerDefinitions.add(new HandlerDefinition<CtClass,CtMethod>(0, i, classMatcher, methodMatcher, handler));
+		handlers[i] = handler;
+	}
 }
