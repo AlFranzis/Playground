@@ -4,9 +4,10 @@ import javassist.CtMethod;
 import al.franzis.osgi.weaving.core.equinox.matching.Matcher;
 
 final class AOPEquinoxMethodMatcher implements Matcher<CtMethod> {
+	
 	@Override
 	public boolean matches(CtMethod ctMethod) {
-		return "publicFoobar".equals(ctMethod.getName());
+		return ctMethod.hasAnnotation(EquinoxProfile.class);
 	}
 
 	@Override
@@ -18,4 +19,5 @@ final class AOPEquinoxMethodMatcher implements Matcher<CtMethod> {
 	public Matcher<CtMethod> or(Matcher<? super CtMethod> other) {
 		return null;
 	}
+	
 }

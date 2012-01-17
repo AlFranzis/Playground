@@ -4,9 +4,10 @@ import javassist.CtClass;
 import al.franzis.osgi.weaving.core.equinox.matching.Matcher;
 
 public class AOPEquinoxClassMatcher implements Matcher<CtClass> {
+	
 	@Override
 	public boolean matches(CtClass ctClass) {
-		return "al.franzis.osgi.weaving.equinox.test.a.EquinoxFoo".equals(ctClass.getName());
+		return ctClass.hasAnnotation(EquinoxProfile.class);
 	}
 
 	@Override
@@ -18,4 +19,5 @@ public class AOPEquinoxClassMatcher implements Matcher<CtClass> {
 	public Matcher<CtClass> or(Matcher<? super CtClass> other) {
 		return null;
 	}
+	
 }
