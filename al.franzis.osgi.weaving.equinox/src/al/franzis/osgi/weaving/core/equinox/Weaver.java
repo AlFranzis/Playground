@@ -21,7 +21,7 @@ import javassist.util.proxy.MethodHandler;
 import org.eclipse.osgi.baseadaptor.bundlefile.BundleEntry;
 import org.eclipse.osgi.baseadaptor.loader.ClasspathEntry;
 import org.eclipse.osgi.baseadaptor.loader.ClasspathManager;
-import org.osgi.framework.hooks.weaving.WovenClass;
+import org.eclipse.osgi.internal.baseadaptor.DefaultClassLoader;
 
 public class Weaver {
 	private static final ThreadLocal<Boolean> threadInsideWeaving = new ThreadLocal<Boolean>() {
@@ -30,38 +30,41 @@ public class Weaver {
 		}
 	};
 	
+	private static Weaver INSTANCE;
+	
 	private ClassPool classPool;
 	private CtClass methodHandlerCtClass;
 	private CtClass methodArrayCtClass;
 	
 	private Matcher matcher;
 	
-	public Weaver() {}
+	public static Weaver getWeaver() {
+		if(INSTANCE == null)
+			INSTANCE = new Weaver();
+		return INSTANCE;
+	}
 	
-	public byte[] weave( String name, byte[] classbytes, ClasspathEntry classpathEntry, BundleEntry entry, ClasspathManager manager )
-    {
-        System.err.println("Intercepting class loading of " + name); //$NON-NLS-1$
-        return null;
-    }
+	private Weaver() {}
 	
-	public void weave(WovenClass wovenClass) {
+	public byte[] weave( String className, byte[] classbytes, ClasspathEntry classpathEntry, BundleEntry entry, ClasspathManager manager ) {
+		System.out.println("Intercepting class loading of " + className); //$NON-NLS-1$
+		
 		if(Boolean.TRUE == threadInsideWeaving.get())
-			return;
+			return null;
 		
 		try {
 			threadInsideWeaving.set(Boolean.TRUE);
 		
-			String className = wovenClass.getClassName();
 //			System.out.println("Loading " + className);
 		
 			if(skipClass(className))
-				return;
+				return null;
 			
 			if (classPool == null) {
 				ClassPool.doPruning = true;
 				classPool = ClassPool.getDefault();
 				classPool.insertClassPath(new ClassClassPath(MethodHandler.class));
-				ClassLoader loader = wovenClass.getBundleWiring().getClassLoader();
+				ClassLoader loader = (DefaultClassLoader)manager.getBaseClassLoader();
 				classPool.insertClassPath(new LoaderClassPath(loader));
 
 				methodHandlerCtClass = classPool.get(IMethodInvocationHandler.class.getName());
@@ -69,11 +72,11 @@ public class Weaver {
 			}
 			
 			byte[] instrumentedByteCode = weave(className);
-			if (instrumentedByteCode != null) {
-				wovenClass.setBytes(instrumentedByteCode);
-			}
+			return instrumentedByteCode;
+			
 		} catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		} finally {
 			threadInsideWeaving.set(Boolean.FALSE);
 		}

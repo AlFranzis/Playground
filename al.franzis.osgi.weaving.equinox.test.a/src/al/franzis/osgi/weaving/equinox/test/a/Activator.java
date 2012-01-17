@@ -30,6 +30,9 @@ public class Activator implements BundleActivator {
 		IMethodInvocationHandler handler = new AOPEquinoxMethodHandler();
 		
 		registerHandler(classMatcher,methodMatcher,handler);
+		
+		EquinoxFoo equinoxFoo = new EquinoxFoo();
+		equinoxFoo.publicFoobar();
 	}
 
 	public void stop(BundleContext bundleContext) throws Exception {

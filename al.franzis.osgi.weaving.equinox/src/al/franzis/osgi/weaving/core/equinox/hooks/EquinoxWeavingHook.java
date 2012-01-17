@@ -18,17 +18,17 @@ import al.franzis.osgi.weaving.core.equinox.Weaver;
 
 public class EquinoxWeavingHook implements ClassLoadingHook, HookConfigurator
 {
-	private Weaver weaver;
 	
-	public EquinoxWeavingHook() {
-		weaver = new Weaver();
-	}
+	public EquinoxWeavingHook() {}
 
     @Override
     public byte[] processClass( String name, byte[] classbytes, ClasspathEntry classpathEntry, BundleEntry entry, ClasspathManager manager )
     {
-    	System.out.println("Equinox weaving hook called on loading " + name);
-    	return weaver.weave(name, classbytes, classpathEntry, entry, manager);
+    	System.out.println("Start: Equinox weaving hook called on loading " + name);
+    	Weaver weaver = Weaver.getWeaver();
+    	byte[] wovenBytecode = weaver.weave(name, classbytes, classpathEntry, entry, manager);
+    	System.out.println("End: Equinox weaving hook called on loading " + name);
+    	return wovenBytecode;
     }
 
     @Override

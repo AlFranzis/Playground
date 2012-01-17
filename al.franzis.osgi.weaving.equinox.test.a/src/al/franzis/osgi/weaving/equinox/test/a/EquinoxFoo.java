@@ -1,9 +1,9 @@
 package al.franzis.osgi.weaving.equinox.test.a;
 
-public class Foo {
+public class EquinoxFoo {
 
 	public void publicFoobar() {
-		System.out.println("Foo.publicFoobar() called");
+		System.out.println("EquinoxFoo.publicFoobar() called");
 	}
 	
 }
