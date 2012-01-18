@@ -14,20 +14,21 @@ import org.eclipse.osgi.baseadaptor.loader.ClasspathManager;
 import org.eclipse.osgi.framework.adaptor.BundleProtectionDomain;
 import org.eclipse.osgi.framework.adaptor.ClassLoaderDelegate;
 
-import al.franzis.osgi.weaving.core.equinox.Weaver;
+import al.franzis.osgi.weaving.core.equinox.EquinoxWeaver;
 
 public class EquinoxWeavingHook implements ClassLoadingHook, HookConfigurator
 {
 	
-	public EquinoxWeavingHook() {}
+	public EquinoxWeavingHook() {
+		System.out.println("Equinox Weaving Hook created");
+	}
 
     @Override
-    public byte[] processClass( String name, byte[] classbytes, ClasspathEntry classpathEntry, BundleEntry entry, ClasspathManager manager )
-    {
-    	System.out.println("Start: Equinox weaving hook called on loading " + name);
-    	Weaver weaver = Weaver.getWeaver();
-    	byte[] wovenBytecode = weaver.weave(name, classbytes, classpathEntry, entry, manager);
-    	System.out.println("End: Equinox weaving hook called on loading " + name);
+    public byte[] processClass( String name, byte[] classbytes, ClasspathEntry classpathEntry, BundleEntry entry, ClasspathManager manager ) {
+//    	System.out.println("Start: Equinox weaving hook called on loading " + name);
+    	EquinoxWeaver weaver = EquinoxWeaver.getWeaver();
+    	byte[] wovenBytecode = weaver.weave(name, classbytes, (ClassLoader)manager.getBaseClassLoader());
+//    	System.out.println("End: Equinox weaving hook called on loading " + name);
     	return wovenBytecode;
     }
 

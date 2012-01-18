@@ -1,6 +1,6 @@
-package al.franzis.osgi.weaving.core.equinox;
+package al.franzis.osgi.weaving.core;
 
-import static al.franzis.osgi.weaving.core.equinox.Constants.CORE_PACKAGE;
+import static al.franzis.osgi.weaving.core.Constants.CORE_PACKAGE;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
@@ -18,19 +18,14 @@ import javassist.LoaderClassPath;
 import javassist.NotFoundException;
 import javassist.util.proxy.MethodHandler;
 
-import org.eclipse.osgi.baseadaptor.bundlefile.BundleEntry;
-import org.eclipse.osgi.baseadaptor.loader.ClasspathEntry;
-import org.eclipse.osgi.baseadaptor.loader.ClasspathManager;
-import org.eclipse.osgi.internal.baseadaptor.DefaultClassLoader;
-
-public class Weaver {
+public class AOPWeaver {
 	private static final ThreadLocal<Boolean> threadInsideWeaving = new ThreadLocal<Boolean>() {
 		public Boolean initialValue() {
 			return Boolean.FALSE;
 		}
 	};
 	
-	private static Weaver INSTANCE;
+	private static AOPWeaver INSTANCE;
 	
 	private ClassPool classPool;
 	private CtClass methodHandlerCtClass;
@@ -38,16 +33,16 @@ public class Weaver {
 	
 	private Matcher matcher;
 	
-	public static Weaver getWeaver() {
+	public static AOPWeaver getWeaver() {
 		if(INSTANCE == null)
-			INSTANCE = new Weaver();
+			INSTANCE = new AOPWeaver();
 		return INSTANCE;
 	}
 	
-	private Weaver() {}
+	private AOPWeaver() {}
 	
-	public byte[] weave( String className, byte[] classbytes, ClasspathEntry classpathEntry, BundleEntry entry, ClasspathManager manager ) {
-		System.out.println("Intercepting class loading of " + className); //$NON-NLS-1$
+	public byte[] weave( String className, byte[] classbytes, ClassLoader classloader ) {
+//		System.out.println("Intercepting class loading of " + className); //$NON-NLS-1$
 		
 		if(Boolean.TRUE == threadInsideWeaving.get())
 			return null;
@@ -64,7 +59,7 @@ public class Weaver {
 				ClassPool.doPruning = true;
 				classPool = ClassPool.getDefault();
 				classPool.insertClassPath(new ClassClassPath(MethodHandler.class));
-				ClassLoader loader = (DefaultClassLoader)manager.getBaseClassLoader();
+				ClassLoader loader = classloader;
 				classPool.insertClassPath(new LoaderClassPath(loader));
 
 				methodHandlerCtClass = classPool.get(IMethodInvocationHandler.class.getName());

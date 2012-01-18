@@ -14,7 +14,6 @@ public class Matcher {
 		
 	}
 	
-	
 	public List<HandlerDefinition<CtClass,CtMethod>> match(CtClass ctClass) {
 		handlerDefinitions = MethodHandlerProvider.getInstance().getHandlerDefinitions().toArray(new HandlerDefinition[0]);
 		handlerCount = handlerDefinitions.length;

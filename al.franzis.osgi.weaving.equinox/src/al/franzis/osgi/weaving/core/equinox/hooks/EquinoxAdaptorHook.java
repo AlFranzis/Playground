@@ -31,7 +31,7 @@ public class EquinoxAdaptorHook implements AdaptorHook, HookConfigurator {
 				MethodHandlerRegistrationService.class.getName(),
 				new MethodHandlerRegistrationServiceImpl(), 
 				new Hashtable<String,String>());
-		System.out.println("Registered MethodHandlerRegistrationService");
+		System.out.println("Registered MethodHandlerRegistrationService for Equinox AOP");
 	}
 
 	@Override

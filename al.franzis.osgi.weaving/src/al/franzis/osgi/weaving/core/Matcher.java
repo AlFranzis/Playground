@@ -15,7 +15,6 @@ public class Matcher {
 		handlerCount = handlerDefinitions.length;
 	}
 	
-	
 	public List<HandlerDefinition<CtClass,CtMethod>> match(CtClass ctClass) {
 		
 		List<HandlerDefinition<CtClass,CtMethod>> matchingHandlers = null;
