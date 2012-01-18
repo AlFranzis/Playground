@@ -7,7 +7,8 @@
       <definition
             class="al.franzis.osgi.weaving.test.a.AOPMethodHandler"
             classMatcher="al.franzis.osgi.weaving.test.a.AOPClassMatcher"
-            methodMatcher="al.franzis.osgi.weaving.test.a.AOPMethodMatcher">
+            methodMatcher="al.franzis.osgi.weaving.test.a.AOPMethodMatcher"
+            order="0">
       </definition>
    </extension>
 
