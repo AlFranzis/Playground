@@ -7,8 +7,11 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.hooks.weaving.WeavingHook;
 
 public class Activator implements BundleActivator {
-
+	private static BundleContext bundleContext;
+	
 	public void start(BundleContext context) throws Exception {
+		bundleContext = context;
+		
 		// register class weaving hook as OSGi service
 		context.registerService(
 				WeavingHook.class.getName(), 
@@ -21,6 +24,10 @@ public class Activator implements BundleActivator {
 		 * De-registration of weaving service happens automatically
 		 * when bundle is stopped
 		 */
+	}
+	
+	public static BundleContext getBundleContext() {
+		return bundleContext;
 	}
 
 }

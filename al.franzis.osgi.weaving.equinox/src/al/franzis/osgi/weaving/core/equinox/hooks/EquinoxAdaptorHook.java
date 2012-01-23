@@ -14,9 +14,14 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 
 public class EquinoxAdaptorHook implements AdaptorHook, HookConfigurator {
-
+	private static BundleContext bundleContext;
+	
+	public static BundleContext getBundleContext() {
+		return bundleContext;
+	}
+	
 	@Override
-	public void addProperties(Properties arg0) {
+	public void addProperties(Properties props) {
 		// empty
 	}
 
@@ -27,6 +32,8 @@ public class EquinoxAdaptorHook implements AdaptorHook, HookConfigurator {
 
 	@Override
 	public void frameworkStart(BundleContext bundleContext) throws BundleException {
+		EquinoxAdaptorHook.bundleContext = bundleContext;
+		
 		bundleContext.registerService(
 				MethodHandlerRegistrationService.class.getName(),
 				new MethodHandlerRegistrationServiceImpl(), 

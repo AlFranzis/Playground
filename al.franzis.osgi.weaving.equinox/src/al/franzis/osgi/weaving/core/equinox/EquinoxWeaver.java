@@ -32,6 +32,7 @@ public class EquinoxWeaver {
 	private CtClass methodArrayCtClass;
 	
 	private Matcher matcher;
+	private ClassFilter classFilter;
 	
 	public static EquinoxWeaver getWeaver() {
 		if(INSTANCE == null)
@@ -201,14 +202,15 @@ public class EquinoxWeaver {
 	}
 	
 	private boolean skipClass(String classname) {
-		return (classname.startsWith("org.eclipse") || classname.startsWith("org.osgi") 
-				|| classname.startsWith("javassist") || classname.startsWith("al.franzis.osgi.weaving.core"));
+		if ( classFilter == null )
+			classFilter = new ClassFilter();
+		return classFilter.filter(classname); 
 	}
 	
 	private static boolean skipInterface(CtClass ctClass) throws NotFoundException {
 		for(CtClass ctInterface : ctClass.getInterfaces())
 		{
-			if( ctInterface.getName().startsWith("al.franzis.osgi.weaving.core"))
+			if( ctInterface.getName().startsWith(Constants.CORE_PACKAGE))
 				return true;
 		}
 		return false;
