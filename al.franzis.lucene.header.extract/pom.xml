@@ -19,7 +19,7 @@
           <artifactId>dcm4che-core</artifactId>
           <version>0.0.0.1</version>
           <scope>system</scope>
-          <systemPath>/home/alex/dev/git-repos/al.franzis.lucene.header.search/al.franzis.lucene.header.extract/lib/dcm4che-core.jar</systemPath>
+          <systemPath>/home/alex/dev/git-repos/Playground/al.franzis.lucene.header.extract/lib/dcm4che-core.jar</systemPath>
         </dependency>
       </dependencies>
 </project>
