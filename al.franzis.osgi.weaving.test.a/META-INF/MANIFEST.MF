@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Test
+Bundle-SymbolicName: al.franzis.osgi.weaving.test.a;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: org.eclipse.core.runtime,
+ al.franzis.osgi.weaving;bundle-version="1.0.0";visibility:=reexport,
+ org.junit4;bundle-version="4.8.1",
+ org.eclipse.jdt.junit4.runtime;bundle-version="1.1.200"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: al.franzis.osgi.weaving.test.a

@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: B
+Bundle-SymbolicName: al.franzis.osgi.weaving.test.b
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.junit
+Import-Package: al.franzis.osgi.weaving.core,
+ al.franzis.osgi.weaving.test.a
