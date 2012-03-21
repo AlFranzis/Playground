@@ -6,7 +6,7 @@
   <description>DICOM Header extraction</description>
   
   <properties>
-	<external.lib.directory>/home/alex/dev/git-repos/Playground/al.franzis.lucene.header.search/al.franzis.lucene.header.extract/lib</external.lib.directory>
+	<external.lib.directory>/home/alex/dev/git-repos/Playground/al.franzis.lucene.header.extract/lib</external.lib.directory>
   	<data.dicom>/home/alex/dev/git-repos/al.franzis.lucene.header.search/data/MANIX</data.dicom>
   	<extraction.output>/home/alex/dev/git-repos/al.franzis.lucene.header.search/extraction_output</extraction.output>	
   </properties>
@@ -23,6 +23,7 @@
           <groupId>dcm4che</groupId>
           <artifactId>dcm4che-core</artifactId>
           <version>0.0.0.1</version>
+          <scope>system</scope>
           <systemPath>${external.lib.directory}/dcm4che-core-2.0.25.jar</systemPath>
         </dependency>
         
