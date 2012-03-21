@@ -9,6 +9,7 @@ import org.dcm4che2.data.DicomObjectToStringParam;
 import org.dcm4che2.data.Tag;
 import org.dcm4che2.io.DicomInputStream;
 import org.dcm4che2.io.StopTagInputHandler;
+import org.dcm4che2.iod.module.composite.PatientModule;
 
 public class BulkDcmDump
 {
@@ -93,6 +94,7 @@ public class BulkDcmDump
     
     private static void dumpDicomElement( DicomObject dicomObject )
     {
+//    	PatientModule pModule = new PatientModule( dicomObject );
     	dicomObject.accept(new DicomVisitor(dicomObject, new ArrayList<Integer>()));
     }
 

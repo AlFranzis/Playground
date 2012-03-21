@@ -5,6 +5,11 @@
   <version>0.0.1-SNAPSHOT</version>
   <description>DICOM Header extraction</description>
   
+  <properties>
+	<external.lib.directory>/home/alex/dev/git-repos/Playground/al.franzis.lucene.header.search/al.franzis.lucene.header.extract/lib</external.lib.directory>
+  	<data.dicom>/home/alex/dev/git-repos/al.franzis.lucene.header.search/data/MANIX</data.dicom>
+  	<extraction.output>/home/alex/dev/git-repos/al.franzis.lucene.header.search/extraction_output</extraction.output>	
+  </properties>
   
    <dependencies>
    		<dependency>
@@ -18,8 +23,61 @@
           <groupId>dcm4che</groupId>
           <artifactId>dcm4che-core</artifactId>
           <version>0.0.0.1</version>
-          <scope>system</scope>
-          <systemPath>/home/alex/dev/git-repos/Playground/al.franzis.lucene.header.extract/lib/dcm4che-core.jar</systemPath>
+          <systemPath>${external.lib.directory}/dcm4che-core-2.0.25.jar</systemPath>
         </dependency>
-      </dependencies>
+        
+        <dependency>
+          <groupId>dcm4che</groupId>
+          <artifactId>dcm4che-iod</artifactId>
+          <version>0.0.0.1</version>
+          <scope>system</scope>
+          <systemPath>${external.lib.directory}/dcm4che-iod-2.0.25.jar</systemPath>
+        </dependency>
+        
+        <dependency>
+    		<groupId>log4j</groupId>
+    		<artifactId>log4j</artifactId>
+    		<version>1.2.16</version>
+		</dependency>
+		
+		<dependency>
+    		<groupId>org.slf4j</groupId>
+    		<artifactId>slf4j-log4j12</artifactId>
+    		<version>1.6.4</version>
+		</dependency>
+      
+   </dependencies>
+   
+   <profiles>  
+   	<profile>  
+    	<id>run-extraction</id>  
+      	<build>  
+       		<plugins>  
+        		<plugin>  
+         			<groupId>org.codehaus.mojo</groupId>  
+         			<artifactId>exec-maven-plugin</artifactId>  
+         			<version>1.1.1</version>  
+         			<executions>  
+         				 <execution>  
+           					<phase>test</phase>  
+           					<goals>  
+            					<goal>java</goal>  
+          					 </goals>  
+           					<configuration>  
+            					<mainClass>al.franzis.lucence.header.extract.BulkDcmDump</mainClass>  
+            					
+            					<arguments>  
+             						<argument>${data.dicom}</argument>  
+             						<argument>${extraction.output}</argument>  
+            					</arguments>  
+           					</configuration>  
+          				</execution>  
+         			</executions>  
+        		</plugin>  
+       		</plugins>  
+      	</build>  
+     </profile>  
+    </profiles>  
+      
+      
 </project>
