@@ -8,12 +8,13 @@
   <packaging>jar</packaging>
 
   <name>jfanotify</name>
-  <url>http://maven.apache.org</url>
+  <url></url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-
+  
+   
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -23,5 +24,78 @@
     </dependency>
   </dependencies>
   
+   <build>
+    <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.7</version>
+        
+        <executions>
+          <execution>
+            <id>build-native</id>
+            <phase>compile</phase>
+            <configuration>
+              <tasks>
+                <property name="native.classpath" refid="maven.compile.classpath" />
+                <echo file="${project.build.directory}/compile-classpath" message="${native.classpath}" />
+                <exec dir="src/main/native" executable="make" failonerror="true"/>
+              </tasks>
+              
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkMode>once</forkMode>
+          <environmentVariables>
+            <LD_LIBRARY_PATH>${basedir}/target/</LD_LIBRARY_PATH>
+          </environmentVariables>
+        </configuration>
+      </plugin>
+    </plugins>
+    
+    
+    <pluginManagement>
+    	<plugins>
+    		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+    		<plugin>
+    			<groupId>org.eclipse.m2e</groupId>
+    			<artifactId>lifecycle-mapping</artifactId>
+    			<version>1.0.0</version>
+    			<configuration>
+    				<lifecycleMappingMetadata>
+    					<pluginExecutions>
+    						<pluginExecution>
+    							<pluginExecutionFilter>
+    								<groupId>
+    									org.apache.maven.plugins
+    								</groupId>
+    								<artifactId>
+    									maven-antrun-plugin
+    								</artifactId>
+    								<versionRange>[1.7,)</versionRange>
+    								<goals>
+    									<goal>run</goal>
+    								</goals>
+    							</pluginExecutionFilter>
+    							<action>
+    								<ignore></ignore>
+    							</action>
+    						</pluginExecution>
+    					</pluginExecutions>
+    				</lifecycleMappingMetadata>
+    			</configuration>
+    		</plugin>
+    	</plugins>
+    </pluginManagement>
+   </build>
   
 </project>
