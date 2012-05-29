@@ -13,7 +13,7 @@
   <properties>
   	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   	<external.lib.directory>/home/alex/dev/git-repos/Playground/al.franzis.lucene.header.extract/lib</external.lib.directory>
-  	<external.lib.directory2>/home/alex/dev/ecworkspace_3.7_ee/al.franzis.lucene.header.serversource/lib</external.lib.directory2>
+  	<external.lib.directory2>/home/alex/dev/git-repos/Playground/al.franzis.lucene.header.serversource/lib</external.lib.directory2>
   	<data.dicom>/home/alex/dev/git-repos/al.franzis.lucene.header.search/data/MANIX</data.dicom>
   	<extraction.output>/home/alex/dev/git-repos/al.franzis.lucene.header.search/extraction_output</extraction.output>	
   </properties>
