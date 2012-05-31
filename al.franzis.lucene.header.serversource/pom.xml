@@ -51,6 +51,14 @@
         </dependency>
         
         <dependency>
+          <groupId>dcm4che</groupId>
+          <artifactId>dcm4che-qr</artifactId>
+          <version>0.0.0.1</version>
+          <scope>system</scope>
+          <systemPath>${external.lib.directory2}/dcm4che-tool-dcmqr-2.0.25.jar</systemPath>
+        </dependency>
+        
+        <dependency>
     		<groupId>log4j</groupId>
     		<artifactId>log4j</artifactId>
     		<version>1.2.16</version>
