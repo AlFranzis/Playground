@@ -17,6 +17,14 @@ public class StudyUIDRetriever {
 	private String remoteAE;
 	private String[] matchingKeys;
 	
+	public static void main(String[] args) {
+		StudyUIDRetriever retriever = new StudyUIDRetriever();
+		retriever.remoteAE = "DCM4CHEE@localhost:104";
+		retriever.matchingKeys = new String[] { "PatientName", "Karl" };
+		retriever.fetch();
+	}
+	
+	
 	public void fetch() {
 		DcmQR dcmqr = new DcmQR("DCMQR");
 		String[] calledAETAddress = split(remoteAE, '@');
