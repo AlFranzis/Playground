@@ -8,6 +8,7 @@ import org.dcm4che2.data.DicomObject;
 import org.dcm4che2.data.Tag;
 import org.dcm4che2.net.ConfigurationException;
 import org.dcm4che2.tool.dcmqr.DcmQR;
+import org.dcm4che2.tool.dcmqr.DcmQR.QueryRetrieveLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,11 +17,14 @@ public class StudyUIDRetriever {
 	
 	private String remoteAE;
 	private String[] matchingKeys;
+	private String[] storeTCs;
+	
 	
 	public static void main(String[] args) {
 		StudyUIDRetriever retriever = new StudyUIDRetriever();
-		retriever.remoteAE = "DCM4CHEE@localhost:104";
-		retriever.matchingKeys = new String[] { "PatientName", "Karl" };
+		retriever.remoteAE = "DCM4CHEE@localhost:11112";
+		retriever.matchingKeys = new String[] { "PatientName", "Hörmandinger, Karl" };
+		retriever.storeTCs = new String[] { "MR" };
 		retriever.fetch();
 	}
 	
@@ -43,7 +47,39 @@ public class StudyUIDRetriever {
 		dcmqr.setMaxOpsInvoked(1);
 		dcmqr.setMaxOpsPerformed(0);
 		
+		dcmqr.setQueryLevel(QueryRetrieveLevel.STUDY);
+		
+		for (String storeTC : storeTCs) {
+			String cuid;
+			String[] tsuids;
+			int colon = storeTC.indexOf(':');
+			if (colon == -1) {
+				cuid = storeTC;
+				tsuids = Constants.DEF_TS;
+			} else {
+				cuid = storeTC.substring(0, colon);
+				String ts = storeTC.substring(colon + 1);
+				try {
+					tsuids = Constants.TS.valueOf(ts).uids;
+				} catch (IllegalArgumentException e) {
+					tsuids = ts.split(",");
+				}
+			}
+			try {
+				cuid = Constants.CUID.valueOf(cuid).uid;
+			} catch (IllegalArgumentException e) {
+				// assume cuid already contains UID
+			}
+			dcmqr.addStoreTransferCapability(cuid, tsuids);
+		}
+		
+		dcmqr.setStoreDestination("/home/alex/dev/tmp1");
+		
+		
 		dcmqr.setCFind(true);
+		dcmqr.setCGet(true);
+		
+		dcmqr.configureTransferCapability(false);
 	    
 		for (int i = 1; i < matchingKeys.length; i++, i++)
 			dcmqr.addMatchingKey(Tag.toTagPath(matchingKeys[i - 1]), matchingKeys[i]);
