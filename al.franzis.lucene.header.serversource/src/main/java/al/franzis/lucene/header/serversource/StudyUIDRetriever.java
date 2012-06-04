@@ -7,10 +7,9 @@ import java.util.List;
 import org.dcm4che2.data.DicomObject;
 import org.dcm4che2.data.Tag;
 import org.dcm4che2.net.ConfigurationException;
-import org.dcm4che2.tool.dcmqr.DcmQR;
-import org.dcm4che2.tool.dcmqr.DcmQR.QueryRetrieveLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 public class StudyUIDRetriever {
 	private static final Logger LOG = LoggerFactory.getLogger(StudyUIDRetriever.class);
@@ -20,17 +19,42 @@ public class StudyUIDRetriever {
 	private String[] storeTCs;
 	
 	
+	
+	public String getRemoteAE() {
+		return remoteAE;
+	}
+
+
+	public void setRemoteAE(String remoteAE) {
+		this.remoteAE = remoteAE;
+	}
+
+	public String[] getMatchingKeys() {
+		return matchingKeys;
+	}
+
+	public void setMatchingKeys(String[] matchingKeys) {
+		this.matchingKeys = matchingKeys;
+	}
+
+	public String[] getStoreTCs() {
+		return storeTCs;
+	}
+
+	public void setStoreTCs(String[] storeTCs) {
+		this.storeTCs = storeTCs;
+	}
+
 	public static void main(String[] args) {
 		StudyUIDRetriever retriever = new StudyUIDRetriever();
 		retriever.remoteAE = "DCM4CHEE@localhost:11112";
 		retriever.matchingKeys = new String[] { "PatientName", "Hörmandinger, Karl" };
 		retriever.storeTCs = new String[] { "MR" };
-		retriever.fetch();
+		retriever.fetch(null);
 	}
 	
-	
-	public void fetch() {
-		DcmQR dcmqr = new DcmQR("DCMQR");
+	public void fetch( OutputStreamFactory outputStreamFactory ) {
+		ExtDcmQR dcmqr = new ExtDcmQR("DCMQR");
 		String[] calledAETAddress = split(remoteAE, '@');
 		dcmqr.setCalledAET(calledAETAddress[0], false);
 		if (calledAETAddress[1] == null) {
@@ -47,7 +71,7 @@ public class StudyUIDRetriever {
 		dcmqr.setMaxOpsInvoked(1);
 		dcmqr.setMaxOpsPerformed(0);
 		
-		dcmqr.setQueryLevel(QueryRetrieveLevel.STUDY);
+		dcmqr.setQueryLevel(Constants.QueryRetrieveLevel.STUDY);
 		
 		for (String storeTC : storeTCs) {
 			String cuid;
@@ -73,18 +97,17 @@ public class StudyUIDRetriever {
 			dcmqr.addStoreTransferCapability(cuid, tsuids);
 		}
 		
-		dcmqr.setStoreDestination("/home/alex/dev/tmp1");
-		
 		
 		dcmqr.setCFind(true);
 		dcmqr.setCGet(true);
 		
 		dcmqr.configureTransferCapability(false);
+		
+		ExtStorageService storageService = new ExtStorageService(dcmqr.getTransferCapabilities(), outputStreamFactory);
+		dcmqr.registerStorageService(storageService);
 	    
 		for (int i = 1; i < matchingKeys.length; i++, i++)
 			dcmqr.addMatchingKey(Tag.toTagPath(matchingKeys[i - 1]), matchingKeys[i]);
-		
-		 dcmqr.configureTransferCapability(false);
 		 
 		 int repeat = 0;
 		 int interval = 0;
