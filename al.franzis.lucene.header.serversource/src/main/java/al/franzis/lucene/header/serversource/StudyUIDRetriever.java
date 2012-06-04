@@ -1,6 +1,7 @@
 package al.franzis.lucene.header.serversource;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collections;
 import java.util.List;
 
@@ -53,7 +54,7 @@ public class StudyUIDRetriever {
 		retriever.fetch(null);
 	}
 	
-	public void fetch( OutputStreamFactory outputStreamFactory ) {
+	public void fetch( OutputStreamFactory<OutputStream> outputStreamFactory ) {
 		ExtDcmQR dcmqr = new ExtDcmQR("DCMQR");
 		String[] calledAETAddress = split(remoteAE, '@');
 		dcmqr.setCalledAET(calledAETAddress[0], false);

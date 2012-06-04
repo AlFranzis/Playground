@@ -3,6 +3,7 @@ package al.franzis.lucene.header.serversource;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -24,17 +25,17 @@ public class FetchTest  extends TestCase
 
     public void testStudyFetching() throws FileNotFoundException
     {
-    	OutputStreamFactory streamFactory = new FileOutputStreamFactory();
+    	OutputStreamFactory<? extends OutputStream> streamFactory = new FileOutputStreamFactory();
     	
     	StudyUIDRetriever retriever = new StudyUIDRetriever();
 		retriever.setRemoteAE("DCM4CHEE@localhost:11112");
 		retriever.setMatchingKeys( new String[] { "PatientName", "Hörmandinger, Karl" } );
 		retriever.setStoreTCs( new String[] { "MR" } );
-		retriever.fetch(streamFactory);
+		retriever.fetch((OutputStreamFactory<OutputStream>)streamFactory);
     }
     
     
-    public static class FileOutputStreamFactory implements OutputStreamFactory {
+    public static class FileOutputStreamFactory implements OutputStreamFactory<FileOutputStream> {
 		private static final String OUTPUT_DIR = "/home/alex/dev/tmp5";
 
 		public FileOutputStreamFactory() {
@@ -53,5 +54,7 @@ public class FetchTest  extends TestCase
 				return null;
 			}
 		}
+
+		public void close(String instanceUID, FileOutputStream outputStream) {}
     }
 }
