@@ -31,11 +31,20 @@ public class DICOMIndexer {
 	private final File docsDir;
 	private final File indexDir;
 	private final boolean create;
+	private Directory dir; 
 	
 	public DICOMIndexer( String docsDir, String indexDir, boolean create) {
 		this.docsDir = checkDocsDir(docsDir);
 		this.indexDir = checkIndexDir(indexDir);
 		this.create = create;
+		
+	}
+	
+	public DICOMIndexer( String docsDir, Directory indexDir, boolean create) {
+		this.docsDir = checkDocsDir(docsDir);
+		this.indexDir = null;
+		this.create = create;
+		this.dir = indexDir;
 	}
 	
 	private File checkDocsDir( String docsDir ) {
@@ -63,12 +72,23 @@ public class DICOMIndexer {
 		return _indexDir;
 	}
 	
+	public boolean open() {
+		try {
+			if( dir == null )
+				dir = FSDirectory.open(indexDir);
+			return true;
+		} catch (IOException e) {
+			LOGGER.error( "I/O Error while opening index dir", e);
+		}
+		return false;
+	}
+	
+	
 	public void index() {
 		Date start = new Date();
 		try {
 			LOGGER.info("Indexing to directory '" + indexDir + "'...");
 
-			Directory dir = FSDirectory.open(indexDir);
 			Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_34);
 			IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_34,
 					analyzer);
@@ -131,6 +151,10 @@ public class DICOMIndexer {
 					NumericField modifiedField = new NumericField("modified");
 					modifiedField.setLongValue(file.lastModified());
 					doc.add(modifiedField);
+					
+					Field sopInstanceUIDField = new Field("uid", file.getName(),
+							Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
+					doc.add(sopInstanceUIDField);
 
 					doc.add(new Field("contents", new BufferedReader(
 							new InputStreamReader(fis, "UTF-8"))));
