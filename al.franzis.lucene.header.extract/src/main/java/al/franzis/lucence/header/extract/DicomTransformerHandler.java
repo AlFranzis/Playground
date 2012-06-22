@@ -7,6 +7,8 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
@@ -17,7 +19,10 @@ public class DicomTransformerHandler implements TransformerHandler {
 	private static Logger LOGGER = LoggerFactory.getLogger(DicomTransformerHandler.class);
 	
 	private Transformer transformer;
-	private int indention = 0;
+	private int level = 0;
+	private Document document;
+	private Field field;
+	private String path;
 	
 	public DicomTransformerHandler() {
 		try {
@@ -37,6 +42,7 @@ public class DicomTransformerHandler implements TransformerHandler {
 	@Override
 	public void startDocument() throws SAXException {
 		LOGGER.debug("startDocument()");
+		document = new Document();
 	}
 
 	@Override
@@ -64,7 +70,22 @@ public class DicomTransformerHandler implements TransformerHandler {
 		for( int i = 0; i < atts.getLength(); i++)
 			buf.append( atts.getQName(i) + " : " + atts.getValue(i) + ", ");
 		LOGGER.debug("startElement( {} attributes: {} )", qName, buf.toString());
+		level++;
 		
+		if ("attr".equals(qName)) {
+			String tag = atts.getValue("tag");
+			String vr = atts.getValue("vr");
+			if ("SQ".equals(vr)) {
+				if (path == null)
+					path = tag;
+				else
+					path += "#" + tag;
+
+			} else {
+				
+			}
+		}
+			
 	}
 
 	@Override
