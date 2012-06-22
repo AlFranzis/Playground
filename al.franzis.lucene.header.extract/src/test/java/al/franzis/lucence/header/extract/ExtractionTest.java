@@ -126,7 +126,7 @@ public class ExtractionTest extends TestCase
 		FileInputStream inputStream = null;
 
 		File outputFile = new File(
-				"/home/alex/dev/git-repos/Playground/al.franzis.lucene.header.extract/src/test/resources/MR000001.xml");
+				"/home/alex/dev/git-repos/Playground/al.franzis.lucene.header.extract/src/test/resources/MR000001.xml.xslt");
 		if (outputFile != null) {
 			dcm2xml.setBaseDir(outputFile.getAbsoluteFile().getParentFile());
 		}
@@ -146,6 +146,53 @@ public class ExtractionTest extends TestCase
 			System.exit(1);
 		} catch (IOException e) {
 			LOGGER.error("Failed to convert " + inputFile + ": "+ e.getMessage(), e);
+			System.exit(1);
+		} finally {
+			try {
+				if (inputStream != null)
+					inputStream.close();
+				if (outputWriter != null)
+					outputWriter.close();
+			} catch (IOException e) {
+				LOGGER.error("Error when closing input / output stream ", e);
+			}
+		}
+		long t2 = System.currentTimeMillis();
+		if (outputFile != null)
+			LOGGER.info("Finished conversion of " + inputFile + "to " + outputFile + " in " + (t2 - t1) + "ms");
+	}
+	
+	public void testDocumentExtraction() {
+		ExtDcm2Lucene dcm2xml = new ExtDcm2Lucene();
+		dcm2xml.setExclude(new int[] { Tag.PixelData });
+		dcm2xml.setComments(true);
+		dcm2xml.setIndent(true);
+
+		File inputFile = new File(
+				"/home/alex/dev/git-repos/Playground/al.franzis.lucene.header.extract/src/test/resources/MR000001");
+		FileInputStream inputStream = null;
+
+		File outputFile = new File(
+				"/home/alex/dev/git-repos/Playground/al.franzis.lucene.header.extract/src/test/resources/MR000001.test");
+		if (outputFile != null) {
+			dcm2xml.setBaseDir(outputFile.getAbsoluteFile().getParentFile());
+		}
+		// else {
+		// File baseDirFile = new File("");
+		// dcm2xml.setBaseDir(baseDirFile);
+		// }
+		FileWriter outputWriter = null;
+
+		long t1 = System.currentTimeMillis();
+		try {
+			inputStream = new FileInputStream(inputFile);
+			outputWriter = new FileWriter(outputFile);
+			dcm2xml.convert(inputStream, outputWriter);
+		} catch (TransformerConfigurationException e) {
+			LOGGER.error("Configuration Error: " + e.getMessage());
+			System.exit(1);
+		} catch (IOException e) {
+			LOGGER.error("Failed to convert " + inputFile + ": " + e.getMessage(), e);
 			System.exit(1);
 		} finally {
 			try {
