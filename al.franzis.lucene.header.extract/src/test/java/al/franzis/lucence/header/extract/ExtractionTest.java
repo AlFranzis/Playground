@@ -6,6 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.transform.TransformerConfigurationException;
 
@@ -14,6 +16,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.apache.log4j.Logger;
+import org.apache.lucene.document.Document;
 import org.dcm4che2.data.Tag;
 
 public class ExtractionTest extends TestCase
@@ -106,7 +109,7 @@ public class ExtractionTest extends TestCase
 		}
 		long t2 = System.currentTimeMillis();
 		if (outputFile != null)
-			LOGGER.info("Finished conversion of " + inputFile + "to " + outputFile + " in " + (t2 - t1) + "ms");
+			LOGGER.info("Finished conversion of " + inputFile + " to " + outputFile + " in " + (t2 - t1) + "ms");
 	}
 	
 	public void testXSLTXmlExtraction() throws MalformedURLException  {
@@ -159,35 +162,26 @@ public class ExtractionTest extends TestCase
 		}
 		long t2 = System.currentTimeMillis();
 		if (outputFile != null)
-			LOGGER.info("Finished conversion of " + inputFile + "to " + outputFile + " in " + (t2 - t1) + "ms");
+			LOGGER.info("Finished conversion of " + inputFile + " to " + outputFile + " in " + (t2 - t1) + "ms");
 	}
 	
 	public void testDocumentExtraction() {
-		ExtDcm2Lucene dcm2xml = new ExtDcm2Lucene();
-		dcm2xml.setExclude(new int[] { Tag.PixelData });
-		dcm2xml.setComments(true);
-		dcm2xml.setIndent(true);
+		ExtDcm2Lucene dcm2Document = new ExtDcm2Lucene();
+		// exclude pixel data from document
+		dcm2Document.setExclude(new int[] { Tag.PixelData });
 
 		File inputFile = new File(
 				"/home/alex/dev/git-repos/Playground/al.franzis.lucene.header.extract/src/test/resources/MR000001");
 		FileInputStream inputStream = null;
 
-		File outputFile = new File(
-				"/home/alex/dev/git-repos/Playground/al.franzis.lucene.header.extract/src/test/resources/MR000001.test");
-		if (outputFile != null) {
-			dcm2xml.setBaseDir(outputFile.getAbsoluteFile().getParentFile());
-		}
-		// else {
-		// File baseDirFile = new File("");
-		// dcm2xml.setBaseDir(baseDirFile);
-		// }
-		FileWriter outputWriter = null;
-
 		long t1 = System.currentTimeMillis();
 		try {
 			inputStream = new FileInputStream(inputFile);
-			outputWriter = new FileWriter(outputFile);
-			dcm2xml.convert(inputStream, outputWriter);
+			
+			List<Document> documents = new ArrayList<Document>();
+			dcm2Document.convert(inputStream, documents);
+			assertEquals(1, documents.size());
+			
 		} catch (TransformerConfigurationException e) {
 			LOGGER.error("Configuration Error: " + e.getMessage());
 			System.exit(1);
@@ -198,15 +192,13 @@ public class ExtractionTest extends TestCase
 			try {
 				if (inputStream != null)
 					inputStream.close();
-				if (outputWriter != null)
-					outputWriter.close();
 			} catch (IOException e) {
-				LOGGER.error("Error when closing input / output stream ", e);
+				LOGGER.error("Error when closing input stream ", e);
 			}
 		}
 		long t2 = System.currentTimeMillis();
-		if (outputFile != null)
-			LOGGER.info("Finished conversion of " + inputFile + "to " + outputFile + " in " + (t2 - t1) + "ms");
+		
+		LOGGER.info("Finished conversion of " + inputFile + " to Lucene Document in " + (t2 - t1) + "ms");
 	}
 
 }

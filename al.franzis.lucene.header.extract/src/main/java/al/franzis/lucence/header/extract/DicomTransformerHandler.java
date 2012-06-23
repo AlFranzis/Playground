@@ -1,6 +1,9 @@
 package al.franzis.lucence.header.extract;
 
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Stack;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
@@ -19,10 +22,38 @@ public class DicomTransformerHandler implements TransformerHandler {
 	private static Logger LOGGER = LoggerFactory.getLogger(DicomTransformerHandler.class);
 	
 	private Transformer transformer;
-	private int level = 0;
 	private Document document;
+	private DicomResult result;
 	private Field field;
-	private String path;
+	private String value;
+	private final Stack<StackElement> tagStack = new Stack<StackElement>();
+	
+	
+	private static class StackElement {
+		private List<String> path;
+		private boolean isSequenceTag;
+		private String vr;
+		
+		private String getFieldName() {
+			if ( path.size() == 1) {
+				return path.get(0) + ":" + vr;
+			}
+			
+			boolean first = true;
+			StringBuffer buf = new StringBuffer();
+			for ( int i = 0; i < path.size(); i++ )
+			{
+				if (!first)
+					buf.append("#");
+				buf.append(path.get(0));
+				first = false;
+			}
+			buf.append(":");
+			buf.append(vr);
+			return buf.toString();
+		}
+		
+	}
 	
 	public DicomTransformerHandler() {
 		try {
@@ -48,6 +79,8 @@ public class DicomTransformerHandler implements TransformerHandler {
 	@Override
 	public void endDocument() throws SAXException {
 		LOGGER.debug("endDocument()");
+		result.setDocument(document);
+		document = null;
 	}
 
 	@Override
@@ -70,36 +103,46 @@ public class DicomTransformerHandler implements TransformerHandler {
 		for( int i = 0; i < atts.getLength(); i++)
 			buf.append( atts.getQName(i) + " : " + atts.getValue(i) + ", ");
 		LOGGER.debug("startElement( {} attributes: {} )", qName, buf.toString());
-		level++;
+	
 		
-		if ("attr".equals(qName)) {
+		if ( "attr".equals(qName) ) {
 			String tag = atts.getValue("tag");
 			String vr = atts.getValue("vr");
-			if ("SQ".equals(vr)) {
-				if (path == null)
-					path = tag;
-				else
-					path += "#" + tag;
-
-			} else {
-				
-			}
-		}
+			
+			
+			List<String> path = tagStack.isEmpty() ? new LinkedList<String>() : new LinkedList<String>(tagStack.lastElement().path);
+			path.add(tag);
+			StackElement se = new StackElement();
+			se.path = path;
+			se.vr = vr;
+			se.isSequenceTag = "SQ".equals(vr);
+			tagStack.push(se);
+			
+		}	
+			
 			
 	}
-
+			
 	@Override
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
 		LOGGER.debug("endElement({})", qName);
+
+		if ("attr".equals(qName)) {
+			StackElement se = tagStack.pop();
+			if (!se.isSequenceTag) {
+				field = new Field(se.getFieldName(), value, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
+				document.add(field);
+			}
+		}
 		
 	}
 
 	@Override
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
-		LOGGER.debug("characters({})", Arrays.copyOfRange(ch, start, start+length));
-		
+		value = new String(ch, start, length);
+		LOGGER.debug("characters({})", value);
 	}
 
 	@Override
@@ -118,71 +161,52 @@ public class DicomTransformerHandler implements TransformerHandler {
 
 	@Override
 	public void skippedEntity(String name) throws SAXException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void startDTD(String name, String publicId, String systemId)
 			throws SAXException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void endDTD() throws SAXException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void startEntity(String name) throws SAXException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void endEntity(String name) throws SAXException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void startCDATA() throws SAXException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void endCDATA() throws SAXException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void comment(char[] ch, int start, int length) throws SAXException {
-		LOGGER.debug("comment({})", Arrays.copyOfRange(ch, start, start + length));
+		LOGGER.debug("comment(\"{}\")", new String(ch, start,length));
 		
 	}
 
 	@Override
 	public void notationDecl(String name, String publicId, String systemId)
 			throws SAXException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void unparsedEntityDecl(String name, String publicId,
 			String systemId, String notationName) throws SAXException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void setResult(Result result) throws IllegalArgumentException {
-		
-		
+		this.result = (DicomResult)result;
 	}
 
 	@Override
@@ -193,7 +217,6 @@ public class DicomTransformerHandler implements TransformerHandler {
 
 	@Override
 	public String getSystemId() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

@@ -65,7 +65,7 @@ public class ExtDcm2Xml {
             th.getTransformer().setOutputProperty(OutputKeys.INDENT, indent ? "yes" : "no");
             th.setResult(outputWriter != null ? new StreamResult(outputWriter) : new StreamResult(System.out));
             final SAXWriter writer = new SAXWriter(th, comments ? th : null);
-            writer.setBaseDir(baseDir);
+//            writer.setBaseDir(baseDir);
             writer.setExclude(exclude);
             dis.setHandler(writer);
             dis.readDicomObject(new BasicDicomObject(), -1);
