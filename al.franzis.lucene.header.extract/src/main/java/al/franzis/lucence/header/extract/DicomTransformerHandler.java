@@ -1,6 +1,7 @@
 package al.franzis.lucence.header.extract;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
@@ -12,6 +13,9 @@ import javax.xml.transform.sax.TransformerHandler;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.Fieldable;
+import org.apache.lucene.document.NumericField;
+import org.dcm4che2.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
@@ -20,6 +24,10 @@ import org.xml.sax.SAXException;
 
 public class DicomTransformerHandler implements TransformerHandler {
 	private static Logger LOGGER = LoggerFactory.getLogger(DicomTransformerHandler.class);
+	
+	private static final String TAG_XMLELEMENT = "attr"; 
+	private static final String TAG_XMLATTRIBUTE = "tag";
+	private static final String VR_XMLATTRIBUTE = "vr"; 
 	
 	private Transformer transformer;
 	private Document document;
@@ -105,10 +113,9 @@ public class DicomTransformerHandler implements TransformerHandler {
 		LOGGER.debug("startElement( {} attributes: {} )", qName, buf.toString());
 	
 		
-		if ( "attr".equals(qName) ) {
-			String tag = atts.getValue("tag");
-			String vr = atts.getValue("vr");
-			
+		if (TAG_XMLELEMENT.equals(qName)) {
+			String tag = atts.getValue(TAG_XMLATTRIBUTE);
+			String vr = atts.getValue(VR_XMLATTRIBUTE);
 			
 			List<String> path = tagStack.isEmpty() ? new LinkedList<String>() : new LinkedList<String>(tagStack.lastElement().path);
 			path.add(tag);
@@ -128,11 +135,12 @@ public class DicomTransformerHandler implements TransformerHandler {
 			throws SAXException {
 		LOGGER.debug("endElement({})", qName);
 
-		if ("attr".equals(qName)) {
+		if (TAG_XMLELEMENT.equals(qName)) {
 			StackElement se = tagStack.pop();
 			if (!se.isSequenceTag) {
-				field = new Field(se.getFieldName(), value, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
-				document.add(field);
+				Fieldable field = createFieldForTag(se, value);
+				if (field != null)
+					document.add(field);
 			}
 		}
 		
@@ -155,8 +163,6 @@ public class DicomTransformerHandler implements TransformerHandler {
 	@Override
 	public void processingInstruction(String target, String data)
 			throws SAXException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -191,7 +197,6 @@ public class DicomTransformerHandler implements TransformerHandler {
 	@Override
 	public void comment(char[] ch, int start, int length) throws SAXException {
 		LOGGER.debug("comment(\"{}\")", new String(ch, start,length));
-		
 	}
 
 	@Override
@@ -224,5 +229,67 @@ public class DicomTransformerHandler implements TransformerHandler {
 	public Transformer getTransformer() {
 		return transformer;
 	}
+	
+	private static Fieldable createFieldForTag(StackElement se, String stringValue) {
+		String vr = se.vr;
+		String fieldname = se.getFieldName();
+		Fieldable field = null;
+		
+		// int convertibles
+		if ("US".equals(vr) || "UL".equals(vr) || "SL".equals(vr) || "SS".equals(vr)) {
+			try {
+				int intValue = Integer.parseInt(stringValue);
+				field = new NumericField(fieldname, 4).setIntValue(intValue);
+			} catch (NumberFormatException e) {
+				LOGGER.error("Error while converting tag {} [{}], value: {} to integer",
+						new Object[] { fieldname, vr, stringValue }, e);
+			}
+			// decimal string, integer string
+		} else if ("DS".equals(vr) || "IS".equals(vr)) {
+			field = new Field(fieldname, stringValue, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
+			// string convertibles
+		} else if ("SH".equals(vr) || "UT".equals(vr) || "UI".equals(vr) || "CS".equals(vr) || "LT".equals(vr)
+				|| "LO".equals(vr) || "PN".equals(vr)) {
+			field = new Field(fieldname, stringValue, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
+		} else if ("OB".equals(vr) || "OW".equals(vr)) {
+			field = new Field(fieldname, stringValue, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
+			// date / time convertibles
+		} else if ("DT".equals(vr)) {
+			try {
+				Date dateValue = DateUtils.parseDT(stringValue, true);
+				field = new NumericField(fieldname, 4).setLongValue(dateValue.getTime());
+			} catch (NumberFormatException e) {
+				LOGGER.error("Error while converting tag {} [{}], value: {} to date/time",
+						new Object[] { fieldname, vr, stringValue }, e);
+			}
+		} else if ("DA".equals(vr)) {
+			try {
+				Date dateValue = DateUtils.parseDA(stringValue, true);
+				field = new NumericField(fieldname, 4).setLongValue(dateValue.getTime());
+			} catch (NumberFormatException e) {
+				LOGGER.error("Error while converting tag {} [{}], value: {} to date/time",
+						new Object[] { fieldname, vr, stringValue }, e);
+			}
+			// time converibles
+		} else if ("TM".equals(vr)) {
+			try {
+				Date dateValue = DateUtils.parseTM(stringValue, true);
+				field = new NumericField(fieldname, 4).setLongValue(dateValue.getTime());
+			} catch (NumberFormatException e) {
+				LOGGER.error("Error while converting tag {} [{}], value: {} to date/time",
+						new Object[] {fieldname, vr, stringValue }, e);
+			}
+			// unknown
+		} else if ("UN".equals(vr)) {
+			field = new Field(fieldname, stringValue, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
+		} else {
+			LOGGER.error("Error while converting tag {} [{}], value: {}", new Object[] { fieldname, vr,
+					stringValue });
+		}
+
+		return field;
+	}
+	
+	
 
 }
