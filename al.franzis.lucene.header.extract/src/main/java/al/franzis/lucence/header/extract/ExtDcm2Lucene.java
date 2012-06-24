@@ -2,7 +2,7 @@ package al.franzis.lucence.header.extract;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
+import java.util.Queue;
 
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.sax.TransformerHandler;
@@ -20,7 +20,7 @@ public class ExtDcm2Lucene {
         this.exclude = exclude;
     }
 
-    public void convert(InputStream inputStream, List<Document> documentBuffer) throws IOException,
+    public void convert(InputStream inputStream, Queue<Document> documentBuffer) throws IOException,
             TransformerConfigurationException {
         DicomInputStream dis = new DicomInputStream(inputStream);
         try {

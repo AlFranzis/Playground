@@ -52,6 +52,12 @@
     	<artifactId>slf4j-log4j12</artifactId>
     	<version>1.6.4</version>
 	</dependency>
+	
+	<dependency>
+		<groupId>al.franzis</groupId>
+  		<artifactId>lucene.header.extract</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
   	
   </dependencies>
   

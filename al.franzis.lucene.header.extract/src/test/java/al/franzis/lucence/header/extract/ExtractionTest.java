@@ -6,8 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import javax.xml.transform.TransformerConfigurationException;
 
@@ -178,7 +178,7 @@ public class ExtractionTest extends TestCase
 		try {
 			inputStream = new FileInputStream(inputFile);
 			
-			List<Document> documents = new ArrayList<Document>();
+			Queue<Document> documents = new LinkedList<Document>();
 			dcm2Document.convert(inputStream, documents);
 			assertEquals(1, documents.size());
 			
