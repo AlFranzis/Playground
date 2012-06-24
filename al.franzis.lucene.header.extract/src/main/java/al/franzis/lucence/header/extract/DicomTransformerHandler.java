@@ -1,6 +1,5 @@
 package al.franzis.lucence.header.extract;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,7 +31,6 @@ public class DicomTransformerHandler implements TransformerHandler {
 	private Transformer transformer;
 	private Document document;
 	private DicomResult result;
-	private Field field;
 	private String value;
 	private final Stack<StackElement> tagStack = new Stack<StackElement>();
 	
@@ -156,7 +154,7 @@ public class DicomTransformerHandler implements TransformerHandler {
 	@Override
 	public void ignorableWhitespace(char[] ch, int start, int length)
 			throws SAXException {
-		LOGGER.debug("ignorableWhitespace({})", Arrays.copyOfRange(ch, start, start + length));
+		LOGGER.debug("ignorableWhitespace({})", new String(ch, start, length));
 		
 	}
 
