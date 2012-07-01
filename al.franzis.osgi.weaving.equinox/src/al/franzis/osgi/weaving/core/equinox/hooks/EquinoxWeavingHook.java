@@ -63,9 +63,13 @@ public class EquinoxWeavingHook implements ClassLoadingHook, HookConfigurator
     }
 
 	@Override
-	public boolean addClassPathEntry(ArrayList<ClasspathEntry> arg0,
-			String arg1, ClasspathManager arg2, BaseData arg3,
-			ProtectionDomain arg4) {
+	// OSGI_LEGACY: Method contained in ClassLoadingHook interface of bundle 'org.eclipse.osgi_3.4.2' does 
+	// not support version of cpEntries ArrayList with generics
+	public boolean addClassPathEntry(@SuppressWarnings("rawtypes") ArrayList cpEntries, String cp,
+			ClasspathManager hostmanager, BaseData sourcedata,
+			ProtectionDomain sourcedomain) {
 		return false;
 	}
+
+	
 }

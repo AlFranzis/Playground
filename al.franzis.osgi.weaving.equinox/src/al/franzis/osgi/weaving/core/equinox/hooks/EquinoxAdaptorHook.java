@@ -72,4 +72,10 @@ public class EquinoxAdaptorHook implements AdaptorHook, HookConfigurator {
 		hookRegistry.addAdaptorHook(new EquinoxAdaptorHook());
 	}
 
+	// OSGI_LEGACY: Method contained in AdaptorHook interface of bundle 'org.eclipse.osgi_3.4.2'
+	// Method does not exist in later versions -> Do not tag wirh @Override
+	public boolean matchDNChain(String pattern, String[] dnChain) {
+		return false;
+	}
+
 }

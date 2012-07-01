@@ -39,8 +39,13 @@ public class Activator implements BundleActivator {
 		Activator.context = null;
 	}
 	
+	// OSGI_LEGACY: : uBndle 'org.eclipse.osgi_3.4.2' does 
+	// not support ServiceReferences with generics
 	private void registerHandler( Matcher<CtClass> classMatcher, Matcher<CtMethod> methodMatcher, IMethodInvocationHandler handler) {
-		ServiceReference<MethodHandlerRegistrationService> serviceReference = getContext().getServiceReference(MethodHandlerRegistrationService.class);
+		String className = MethodHandlerRegistrationService.class.getName();
+		@SuppressWarnings("rawtypes")
+		ServiceReference serviceReference = getContext().getServiceReference(className);
+		
 		if(serviceReference != null) {
 			MethodHandlerRegistrationService extensionService = (MethodHandlerRegistrationService)getContext().getService(serviceReference);
 			if(extensionService != null) {
