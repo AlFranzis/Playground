@@ -10,7 +10,7 @@ import javassist.NotFoundException;
 public class Helpers {
 
 	public static Method findMethod(Class<?> clazz, String methodName, String methodDescription) {
-		  Method[] methods = clazz.getDeclaredMethods();
+		  Method[] methods = clazz.getMethods();
 	        int n = methods.length;
 	        for (int i = 0; i < n; i++)
 	            if (methods[i].getName().equals(methodName) 
