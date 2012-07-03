@@ -61,11 +61,17 @@ public class EquinoxWeaver {
 				classPool = ClassPool.getDefault();
 				classPool.insertClassPath(new ClassClassPath(MethodHandler.class));
 				ClassLoader loader = classloader;
+				System.out.println("Inserting classloader " + classloader);
 				classPool.insertClassPath(new LoaderClassPath(loader));
 
 				methodHandlerCtClass = classPool.get(IMethodInvocationHandler.class.getName());
 				methodArrayCtClass = classPool.get("java.lang.reflect.Method[]");
+			} else {
+				ClassLoader loader = classloader;
+				System.out.println("Inserting classloader " + classloader);
+				classPool.insertClassPath(new LoaderClassPath(loader));
 			}
+				
 			
 			byte[] instrumentedByteCode = weave(className);
 			return instrumentedByteCode;
@@ -208,12 +214,17 @@ public class EquinoxWeaver {
 	}
 	
 	private static boolean skipInterface(CtClass ctClass) throws NotFoundException {
-		for(CtClass ctInterface : ctClass.getInterfaces())
+		try {
+			for (CtClass ctInterface : ctClass.getInterfaces()) {
+				if (ctInterface.getName().startsWith(Constants.CORE_PACKAGE))
+					return true;
+			}
+			return false;
+		} catch (Throwable t)
 		{
-			if( ctInterface.getName().startsWith(Constants.CORE_PACKAGE))
-				return true;
+			t.printStackTrace();
+			return true;
 		}
-		return false;
 	}
 
 }
