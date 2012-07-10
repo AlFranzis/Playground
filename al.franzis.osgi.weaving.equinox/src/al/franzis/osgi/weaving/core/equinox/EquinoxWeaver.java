@@ -8,9 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.osgi.baseadaptor.bundlefile.BundleEntry;
-import org.eclipse.osgi.baseadaptor.loader.ClasspathEntry;
-
 import javassist.CannotCompileException;
 import javassist.ClassClassPath;
 import javassist.ClassPool;
@@ -22,6 +19,9 @@ import javassist.CtNewMethod;
 import javassist.LoaderClassPath;
 import javassist.NotFoundException;
 import javassist.util.proxy.MethodHandler;
+
+import org.eclipse.osgi.baseadaptor.bundlefile.BundleEntry;
+import org.eclipse.osgi.baseadaptor.loader.ClasspathEntry;
 
 public class EquinoxWeaver {
 	private static final ThreadLocal<Boolean> threadInsideWeaving = new ThreadLocal<Boolean>() {
@@ -101,6 +101,10 @@ public class EquinoxWeaver {
 	
 	private byte[] weave(String className) throws NotFoundException, CannotCompileException, IOException {
 		CtClass ctClass = classPool.get(className);
+		
+		// skip message classes for localization
+		if ( ctClass.getSimpleName().equals("messages") )
+			return null;
 		
 		if(skipInterface(ctClass))
 			return null;
