@@ -4,7 +4,11 @@ import static al.franzis.osgi.weaving.core.equinox.Constants.CORE_PACKAGE;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import org.eclipse.osgi.baseadaptor.bundlefile.BundleEntry;
 
 import javassist.CannotCompileException;
 import javassist.ClassClassPath;
@@ -28,6 +32,7 @@ public class EquinoxWeaver {
 	private static EquinoxWeaver INSTANCE;
 	
 	private ClassPool classPool;
+	private Set<String> insertedBundles;
 	private CtClass methodHandlerCtClass;
 	private CtClass methodArrayCtClass;
 	
@@ -42,7 +47,7 @@ public class EquinoxWeaver {
 	
 	private EquinoxWeaver() {}
 	
-	public byte[] weave( String className, byte[] classbytes, ClassLoader classloader ) {
+	public byte[] weave( String className, byte[] classbytes, BundleEntry entry, ClassLoader classloader ) {
 		System.out.println("Intercepting class loading of " + className); //$NON-NLS-1$
 		
 		if(Boolean.TRUE == threadInsideWeaving.get())
@@ -60,19 +65,28 @@ public class EquinoxWeaver {
 				ClassPool.doPruning = true;
 				classPool = ClassPool.getDefault();
 				classPool.insertClassPath(new ClassClassPath(MethodHandler.class));
+				
+				insertedBundles = new HashSet<String>();
+				
+				String bundleName = entry.getName();
 				ClassLoader loader = classloader;
-				System.out.println("Inserting classloader " + classloader);
+				System.out.println("Inserting " + bundleName + " classloader " + classloader );
 				classPool.insertClassPath(new LoaderClassPath(loader));
-
+				insertedBundles.add(bundleName);
+				
 				methodHandlerCtClass = classPool.get(IMethodInvocationHandler.class.getName());
 				methodArrayCtClass = classPool.get("java.lang.reflect.Method[]");
 			} else {
-				ClassLoader loader = classloader;
-				System.out.println("Inserting classloader " + classloader);
-				classPool.insertClassPath(new LoaderClassPath(loader));
+				String bundleName = entry.getName();
+				if (!insertedBundles.contains(bundleName))
+				{
+					ClassLoader loader = classloader;
+					System.out.println("Inserting " + bundleName + " classloader " + classloader );
+					classPool.insertClassPath(new LoaderClassPath(loader));
+					insertedBundles.add(bundleName);
+				}
 			}
 				
-			
 			byte[] instrumentedByteCode = weave(className);
 			return instrumentedByteCode;
 			

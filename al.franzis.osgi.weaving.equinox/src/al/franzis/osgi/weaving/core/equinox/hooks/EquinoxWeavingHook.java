@@ -27,7 +27,7 @@ public class EquinoxWeavingHook implements ClassLoadingHook, HookConfigurator
     public byte[] processClass( String name, byte[] classbytes, ClasspathEntry classpathEntry, BundleEntry entry, ClasspathManager manager ) {
 //    	System.out.println("Start: Equinox weaving hook called on loading " + name);
     	EquinoxWeaver weaver = EquinoxWeaver.getWeaver();
-    	byte[] wovenBytecode = weaver.weave(name, classbytes, (ClassLoader)manager.getBaseClassLoader());
+    	byte[] wovenBytecode = weaver.weave(name, classbytes, entry, (ClassLoader)manager.getBaseClassLoader());
 //    	System.out.println("End: Equinox weaving hook called on loading " + name);
     	return wovenBytecode;
     }
