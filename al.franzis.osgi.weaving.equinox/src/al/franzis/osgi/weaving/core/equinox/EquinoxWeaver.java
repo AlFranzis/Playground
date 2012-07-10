@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.osgi.baseadaptor.bundlefile.BundleEntry;
+import org.eclipse.osgi.baseadaptor.loader.ClasspathEntry;
 
 import javassist.CannotCompileException;
 import javassist.ClassClassPath;
@@ -47,7 +48,7 @@ public class EquinoxWeaver {
 	
 	private EquinoxWeaver() {}
 	
-	public byte[] weave( String className, byte[] classbytes, BundleEntry entry, ClassLoader classloader ) {
+	public byte[] weave( String className, byte[] classbytes, ClasspathEntry classpathEntry, BundleEntry entry, ClassLoader classloader ) {
 		System.out.println("Intercepting class loading of " + className); //$NON-NLS-1$
 		
 		if(Boolean.TRUE == threadInsideWeaving.get())
@@ -68,7 +69,7 @@ public class EquinoxWeaver {
 				
 				insertedBundles = new HashSet<String>();
 				
-				String bundleName = entry.getName();
+				String bundleName = classpathEntry.getBundleFile().toString();
 				ClassLoader loader = classloader;
 				System.out.println("Inserting " + bundleName + " classloader " + classloader );
 				classPool.insertClassPath(new LoaderClassPath(loader));
@@ -77,7 +78,7 @@ public class EquinoxWeaver {
 				methodHandlerCtClass = classPool.get(IMethodInvocationHandler.class.getName());
 				methodArrayCtClass = classPool.get("java.lang.reflect.Method[]");
 			} else {
-				String bundleName = entry.getName();
+				String bundleName = classpathEntry.getBundleFile().toString();
 				if (!insertedBundles.contains(bundleName))
 				{
 					ClassLoader loader = classloader;
