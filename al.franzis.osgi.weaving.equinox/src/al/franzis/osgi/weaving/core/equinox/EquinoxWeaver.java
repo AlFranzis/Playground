@@ -23,6 +23,8 @@ import javassist.util.proxy.MethodHandler;
 import org.eclipse.osgi.baseadaptor.bundlefile.BundleEntry;
 import org.eclipse.osgi.baseadaptor.loader.ClasspathEntry;
 
+import al.franzis.osgi.weaving.core.equinox.log.WeavingLogger;
+
 public class EquinoxWeaver {
 	private static final ThreadLocal<Boolean> threadInsideWeaving = new ThreadLocal<Boolean>() {
 		public Boolean initialValue() {
@@ -40,6 +42,8 @@ public class EquinoxWeaver {
 	private Matcher matcher;
 	private ClassFilter classFilter;
 	
+	private final WeavingLogger LOGGER = WeavingLogger.getInstance();
+	
 	public static EquinoxWeaver getWeaver() {
 		if(INSTANCE == null)
 			INSTANCE = new EquinoxWeaver();
@@ -49,7 +53,9 @@ public class EquinoxWeaver {
 	private EquinoxWeaver() {}
 	
 	public byte[] weave( String className, byte[] classbytes, ClasspathEntry classpathEntry, BundleEntry entry, ClassLoader classloader ) {
-		System.out.println("Intercepting class loading of " + className); //$NON-NLS-1$
+		String msg = "Intercepting class loading of " + className;
+		System.out.println(msg); //$NON-NLS-1$
+		LOGGER.info(msg);
 		
 		if(Boolean.TRUE == threadInsideWeaving.get())
 			return null;

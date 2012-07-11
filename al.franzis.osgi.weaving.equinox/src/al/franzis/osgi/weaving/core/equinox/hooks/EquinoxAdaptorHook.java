@@ -15,6 +15,7 @@ import org.osgi.framework.BundleException;
 
 public class EquinoxAdaptorHook implements AdaptorHook, HookConfigurator {
 	private static BundleContext bundleContext;
+	private static BaseAdaptor baseAdaptor;
 	
 	public static BundleContext getBundleContext() {
 		return bundleContext;
@@ -57,8 +58,8 @@ public class EquinoxAdaptorHook implements AdaptorHook, HookConfigurator {
 	}
 
 	@Override
-	public void initialize(BaseAdaptor arg0) {
-		// empty
+	public void initialize(BaseAdaptor baseAdaptor) {
+		EquinoxAdaptorHook.baseAdaptor = baseAdaptor;
 	}
 
 	@Override
@@ -77,5 +78,10 @@ public class EquinoxAdaptorHook implements AdaptorHook, HookConfigurator {
 	public boolean matchDNChain(String pattern, String[] dnChain) {
 		return false;
 	}
+	
+	public static FrameworkLog getFrameworkLog() {
+		return baseAdaptor.getFrameworkLog();
+	}
+	
 
 }
