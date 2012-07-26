@@ -4,7 +4,9 @@ import static al.franzis.osgi.weaving.core.equinox.Constants.CORE_PACKAGE;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javassist.CannotCompileException;
 import javassist.ClassClassPath;
@@ -18,6 +20,11 @@ import javassist.LoaderClassPath;
 import javassist.NotFoundException;
 import javassist.util.proxy.MethodHandler;
 
+import org.eclipse.osgi.baseadaptor.bundlefile.BundleEntry;
+import org.eclipse.osgi.baseadaptor.loader.ClasspathEntry;
+
+import al.franzis.osgi.weaving.core.equinox.log.WeavingLogger;
+
 public class EquinoxWeaver {
 	private static final ThreadLocal<Boolean> threadInsideWeaving = new ThreadLocal<Boolean>() {
 		public Boolean initialValue() {
@@ -28,11 +35,14 @@ public class EquinoxWeaver {
 	private static EquinoxWeaver INSTANCE;
 	
 	private ClassPool classPool;
+	private Set<String> insertedBundles;
 	private CtClass methodHandlerCtClass;
 	private CtClass methodArrayCtClass;
 	
 	private Matcher matcher;
 	private ClassFilter classFilter;
+	
+	private final WeavingLogger LOGGER = WeavingLogger.getInstance();
 	
 	public static EquinoxWeaver getWeaver() {
 		if(INSTANCE == null)
@@ -42,8 +52,10 @@ public class EquinoxWeaver {
 	
 	private EquinoxWeaver() {}
 	
-	public byte[] weave( String className, byte[] classbytes, ClassLoader classloader ) {
-		System.out.println("Intercepting class loading of " + className); //$NON-NLS-1$
+	public byte[] weave( String className, byte[] classbytes, ClasspathEntry classpathEntry, BundleEntry entry, ClassLoader classloader ) {
+		String msg = "Intercepting class loading of " + className;
+		System.out.println(msg); //$NON-NLS-1$
+		LOGGER.info(msg);
 		
 		if(Boolean.TRUE == threadInsideWeaving.get())
 			return null;
@@ -60,13 +72,28 @@ public class EquinoxWeaver {
 				ClassPool.doPruning = true;
 				classPool = ClassPool.getDefault();
 				classPool.insertClassPath(new ClassClassPath(MethodHandler.class));
+				
+				insertedBundles = new HashSet<String>();
+				
+				String bundleName = classpathEntry.getBundleFile().toString();
 				ClassLoader loader = classloader;
+				System.out.println("Inserting " + bundleName + " classloader " + classloader );
 				classPool.insertClassPath(new LoaderClassPath(loader));
-
+				insertedBundles.add(bundleName);
+				
 				methodHandlerCtClass = classPool.get(IMethodInvocationHandler.class.getName());
 				methodArrayCtClass = classPool.get("java.lang.reflect.Method[]");
+			} else {
+				String bundleName = classpathEntry.getBundleFile().toString();
+				if (!insertedBundles.contains(bundleName))
+				{
+					ClassLoader loader = classloader;
+					System.out.println("Inserting " + bundleName + " classloader " + classloader );
+					classPool.insertClassPath(new LoaderClassPath(loader));
+					insertedBundles.add(bundleName);
+				}
 			}
-			
+				
 			byte[] instrumentedByteCode = weave(className);
 			return instrumentedByteCode;
 			
@@ -80,6 +107,10 @@ public class EquinoxWeaver {
 	
 	private byte[] weave(String className) throws NotFoundException, CannotCompileException, IOException {
 		CtClass ctClass = classPool.get(className);
+		
+		// skip message classes for localization
+		if ( ctClass.getSimpleName().equals("messages") )
+			return null;
 		
 		if(skipInterface(ctClass))
 			return null;
@@ -208,12 +239,17 @@ public class EquinoxWeaver {
 	}
 	
 	private static boolean skipInterface(CtClass ctClass) throws NotFoundException {
-		for(CtClass ctInterface : ctClass.getInterfaces())
+		try {
+			for (CtClass ctInterface : ctClass.getInterfaces()) {
+				if (ctInterface.getName().startsWith(Constants.CORE_PACKAGE))
+					return true;
+			}
+			return false;
+		} catch (Throwable t)
 		{
-			if( ctInterface.getName().startsWith(Constants.CORE_PACKAGE))
-				return true;
+			t.printStackTrace();
+			return true;
 		}
-		return false;
 	}
 
 }

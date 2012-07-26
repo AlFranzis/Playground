@@ -15,6 +15,7 @@ import org.osgi.framework.BundleException;
 
 public class EquinoxAdaptorHook implements AdaptorHook, HookConfigurator {
 	private static BundleContext bundleContext;
+	private static BaseAdaptor baseAdaptor;
 	
 	public static BundleContext getBundleContext() {
 		return bundleContext;
@@ -57,8 +58,8 @@ public class EquinoxAdaptorHook implements AdaptorHook, HookConfigurator {
 	}
 
 	@Override
-	public void initialize(BaseAdaptor arg0) {
-		// empty
+	public void initialize(BaseAdaptor baseAdaptor) {
+		EquinoxAdaptorHook.baseAdaptor = baseAdaptor;
 	}
 
 	@Override
@@ -71,5 +72,16 @@ public class EquinoxAdaptorHook implements AdaptorHook, HookConfigurator {
 	public void addHooks(HookRegistry hookRegistry) {
 		hookRegistry.addAdaptorHook(new EquinoxAdaptorHook());
 	}
+
+	// OSGI_LEGACY: Method contained in AdaptorHook interface of bundle 'org.eclipse.osgi_3.4.2'
+	// Method does not exist in later versions -> Do not tag wirh @Override
+	public boolean matchDNChain(String pattern, String[] dnChain) {
+		return false;
+	}
+	
+	public static FrameworkLog getFrameworkLog() {
+		return baseAdaptor.getFrameworkLog();
+	}
+	
 
 }

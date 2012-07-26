@@ -9,6 +9,6 @@ Export-Package: al.franzis.osgi.weaving.core.equinox,
  al.franzis.osgi.weaving.core.equinox.hooks,
  al.franzis.osgi.weaving.core.equinox.matching,
  javassist
-Bundle-ClassPath: lib/javassist.jar,
+Bundle-ClassPath: lib/javassist-3.16.1-GA.jar,
  .
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
