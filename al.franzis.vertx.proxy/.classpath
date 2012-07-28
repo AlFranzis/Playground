@@ -2,19 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry kind="lib" path="/home/alex/dev/vert.x-1.2.1.final/lib/groovy-all-2.0.0.jar"/>
-	<classpathentry kind="lib" path="/home/alex/dev/vert.x-1.2.1.final/lib/hazelcast-2.1.2.jar"/>
-	<classpathentry kind="lib" path="/home/alex/dev/vert.x-1.2.1.final/lib/jackson-core-asl-1.9.4.jar"/>
-	<classpathentry kind="lib" path="/home/alex/dev/vert.x-1.2.1.final/lib/jackson-mapper-asl-1.9.4.jar"/>
-	<classpathentry kind="lib" path="/home/alex/dev/vert.x-1.2.1.final/lib/netty-3.5.0.Final.jar"/>
-	<classpathentry kind="lib" path="/home/alex/dev/vert.x-1.2.1.final/lib/rhino-1.7R4.jar"/>
-	<classpathentry kind="lib" path="/home/alex/dev/vert.x-1.2.1.final/lib/vertx-core-1.2.1.final.jar"/>
-	<classpathentry kind="lib" path="/home/alex/dev/vert.x-1.2.1.final/lib/vertx-lang-groovy-1.2.1.final.jar"/>
-	<classpathentry kind="lib" path="/home/alex/dev/vert.x-1.2.1.final/lib/vertx-lang-java-1.2.1.final.jar"/>
-	<classpathentry kind="lib" path="/home/alex/dev/vert.x-1.2.1.final/lib/vertx-lang-jruby-1.2.1.final.jar"/>
-	<classpathentry kind="lib" path="/home/alex/dev/vert.x-1.2.1.final/lib/vertx-lang-jython-1.2.1.final.jar"/>
-	<classpathentry kind="lib" path="/home/alex/dev/vert.x-1.2.1.final/lib/vertx-lang-rhino-1.2.1.final.jar"/>
-	<classpathentry kind="lib" path="/home/alex/dev/vert.x-1.2.1.final/lib/vertx-platform-1.2.1.final.jar"/>
-	<classpathentry kind="lib" path="/home/alex/dev/vert.x-1.2.1.final/lib/vertx-testframework-1.2.1.final.jar"/>
+	<classpathentry kind="lib" path="lib/vertx-core-1.2.2.final.jar"/>
+	<classpathentry kind="lib" path="lib/netty-3.5.0.Final.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
