@@ -1,7 +1,8 @@
 package bundled2;
 
 public class DummyClass {
-	public void foobar() {
-		System.out.println("foobar called");
+	
+	public String foobar( int i ) {
+		return "foobar x " + i;
 	}
 }

@@ -11,6 +11,7 @@
 		<module>bundleB</module>
 		<module>bundleC</module>
 		<module>bundleD</module>
+		<module>bundleD.test</module>
 	</modules>
 	
 	<properties>
@@ -19,28 +20,39 @@
 	
 	<dependencies>
 		
+		<!--
 		<dependency>
-			<groupId>org.eclipse</groupId>
+			<groupId>org.</groupId>
   			<artifactId>org.eclipse.osgi</artifactId>
   			<version>3.4.2.R34x_v20080826-1230</version>
   		</dependency>
+		-->
 		
+		<!--
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+		</dependency>
+		-->
 	</dependencies>
 	
-	<!--
+	
 	<repositories>
 		<repository>
 			<id>helios</id>
 			<layout>p2</layout>
 			<url>http://download.eclipse.org/releases/helios</url>
 		</repository>
+		
 		<repository>
 			<id>galileoTest</id>
 			<layout>p2</layout>
 			<url>http://download.eclipse.org/eclipse/updates/3.6-JUnit-Tests/</url>
 		</repository>
+		
 	</repositories>
-	-->
+	
 	
 	<build>
 		<plugins>
