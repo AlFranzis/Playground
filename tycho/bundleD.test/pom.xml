@@ -41,10 +41,6 @@
     			<groupId>org.eclipse.tycho</groupId>
    				<artifactId>tycho-surefire-plugin</artifactId>
     			<version>${tycho-version}</version>
-    			<configuration>
-      				<testSuite>bundled.test</testSuite>
-      				<testClass>bundled.test.TestDummyClass</testClass>
-    			</configuration>
   			</plugin>
 		</plugins>
 	</build>

@@ -14,4 +14,50 @@
 	<artifactId>bundleA</artifactId>
 	<version>2.0.0.qualifier</version>
 	<packaging>eclipse-plugin</packaging>
+	
+	<build>
+		<plugins>
+		
+			<plugin>
+				<groupId>com.pyx4me</groupId>
+				<artifactId>proguard-maven-plugin</artifactId>
+				<version>2.0.4</version>
+				<executions>
+					<execution>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>proguard</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<obfuscate>true</obfuscate>
+					<injar>${project.build.finalName}.jar</injar>
+					<outjar>${project.build.finalName}-small.jar</outjar>
+					<outputDirectory>${project.build.directory}</outputDirectory>
+					<proguardInclude>${basedir}/proguard.conf</proguardInclude>
+					<options>
+						<!-- Keeps 4 All public classes the public fields/members
+						 Keep in mind that its best that only the entry points are public -->
+						<option>-keep public class * { public *;}</option>
+						<option>-keep public class Main 
+								{
+									public static void main(java.lang.String[]);
+								}</option>
+             
+						<option>-dontpreverify</option>
+              
+					</options>
+					<libs>
+						<lib>${java.home}/lib/rt.jar</lib>
+						<lib>${java.home}/lib/jsse.jar</lib>
+						<lib>${java.home}/../lib/tools.jar</lib>
+					</libs>
+				</configuration>
+			</plugin>
+		
+		
+		</plugins>
+	
+	</build>
 </project>
