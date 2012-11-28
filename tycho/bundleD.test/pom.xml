@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>al.franzis.tycho.sandbox</artifactId>
+		<groupId>al.franzis</groupId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+	<groupId>al.franzis</groupId>
+	<!-- artefact name must match OSGi bundle name -->
+	<artifactId>bundleD.test</artifactId>
+	<version>1.0.0.qualifier</version>
+	<packaging>eclipse-test-plugin</packaging>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.basedir}/src2</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+    			<groupId>org.eclipse.tycho</groupId>
+   				<artifactId>tycho-surefire-plugin</artifactId>
+    			<version>${tycho-version}</version>
+    			<configuration>
+      				<testSuite>bundled.test</testSuite>
+      				<testClass>bundled.test.TestDummyClass</testClass>
+    			</configuration>
+  			</plugin>
+		</plugins>
+	</build>
+</project>
