@@ -7,11 +7,15 @@
 	<packaging>pom</packaging>
 
 	<modules>
+		<!--
 		<module>bundleA</module>
 		<module>bundleB</module>
 		<module>bundleC</module>
+		-->
+		<module>thirdparty.easymock</module>
 		<module>bundleD</module>
 		<module>bundleD.test</module>
+		<module>bundleD.fragment</module>
 	</modules>
 	
 	<properties>
