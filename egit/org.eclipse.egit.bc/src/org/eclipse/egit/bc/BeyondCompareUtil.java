@@ -14,8 +14,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.egit.bc.preferences.BeyondCompareEgitPreferencePage;
 import org.eclipse.egit.core.internal.CompareCoreUtils;
-import org.eclipse.egit.ui.Activator;
 import org.eclipse.egit.ui.internal.CompareUtils;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -35,9 +35,11 @@ public class BeyondCompareUtil {
 	 * @param rightFile
 	 */
 	public static void execBeyondCompare(String leftFile, String rightFile) {
-		String beyondCompareCommend = "C:/Program Files (x86)/Beyond Compare 3/BComp.exe"; //$NON-NLS-1$
-
-		exec(beyondCompareCommend, leftFile, rightFile, "/rightreadonly"); //$NON-NLS-1$
+		String beyondCompareCommand = BeyondCompareEgitPreferencePage.getBeyondCompareExecutablePath();
+		if ( beyondCompareCommand == null )
+			return;
+		
+		exec(beyondCompareCommand, leftFile, rightFile, "/rightreadonly"); //$NON-NLS-1$
 	}
 
 	/**

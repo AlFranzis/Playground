@@ -9,7 +9,6 @@
 
 package org.eclipse.egit.bc;
 
-import org.eclipse.egit.ui.internal.actions.ActionCommands;
 
 /**
  * The "compare with ref" action. This action opens a Ref selection dialog to
@@ -20,7 +19,7 @@ public class BeyondCompareWithCommitAction extends BeyondCompareRepositoryAction
 	 *
 	 */
 	public BeyondCompareWithCommitAction() {
-		super(ActionCommands.COMPARE_WITH_COMMIT_ACTION,
+		super(BeyondCompareActionCommands.COMPARE_WITH_COMMIT_ACTION,
 				new BeyondCompareWithCommitActionHandler());
 	}
 }

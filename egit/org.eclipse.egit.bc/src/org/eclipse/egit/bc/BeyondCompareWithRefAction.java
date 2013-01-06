@@ -1,24 +1,25 @@
 /*******************************************************************************
- * Copyright (C) 2009, Stefan Lay <stefan.lay@sap.com>
+ * Copyright (C) 2010, Mathias Kinzler <mathias.kinzler@sap.com>
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
+
 package org.eclipse.egit.bc;
 
 
 /**
- * Compares the working tree content of a file with the version of the file in
- * the HEAD commit.
+ * The "compare with ref" action. This action opens a Ref selection dialog to
+ * select a branch or tag and then a compare editor comparing the version.
  */
-public class BeyondCompareWithHeadAction extends BeyondCompareRepositoryAction {
-
+public class BeyondCompareWithRefAction extends BeyondCompareRepositoryAction {
 	/**
 	 *
 	 */
-	public BeyondCompareWithHeadAction() {
-		super(BeyondCompareActionCommands.COMPARE_WITH_HEAD_ACTION, new BeyondCompareWithHeadActionHandler());
+	public BeyondCompareWithRefAction() {
+		super(BeyondCompareActionCommands.COMPARE_WITH_REF_ACTION,
+				new BeyondCompareWithRefActionHandler());
 	}
 }

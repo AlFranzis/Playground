@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.egit.bc;
 
-import org.eclipse.egit.ui.internal.actions.ActionCommands;
 
 /**
  * Compare with previous revision action.
@@ -21,7 +20,7 @@ public class BeyondCompareWithPreviousAction extends BeyondCompareRepositoryActi
 	 * Create compare with previous revision action
 	 */
 	public BeyondCompareWithPreviousAction() {
-		super(ActionCommands.COMPARE_WITH_PREVIOUS_ACTION,
+		super(BeyondCompareActionCommands.COMPARE_WITH_PREVIOUS_ACTION,
 				new BeyondCompareWithPreviousActionHandler());
 	}
 
