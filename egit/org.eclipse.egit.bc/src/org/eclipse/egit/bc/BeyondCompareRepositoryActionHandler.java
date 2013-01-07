@@ -247,8 +247,8 @@ public abstract class BeyondCompareRepositoryActionHandler extends AbstractHandl
 			IStructuredSelection selection, Shell shell) {
 		RepositoryMapping mapping = null;
 		for (IPath location : getSelectedLocations(selection)) {
-			RepositoryMapping repositoryMapping = RepositoryMapping
-					.getMapping(location);
+			IResource resource = org.eclipse.egit.core.internal.util.ResourceUtil.getResourceForLocation(location);
+			RepositoryMapping repositoryMapping = RepositoryMapping.getMapping(resource);
 			if (mapping == null)
 				mapping = repositoryMapping;
 			if (repositoryMapping == null)

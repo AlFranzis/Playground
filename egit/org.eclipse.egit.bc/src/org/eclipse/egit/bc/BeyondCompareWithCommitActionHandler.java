@@ -40,9 +40,8 @@ public class BeyondCompareWithCommitActionHandler extends BeyondCompareRepositor
 		IResource[] resources = getSelectedResources(event);
 		if (repo == null)
 			return null;
-
-		CommitSelectionDialog dlg = new CommitSelectionDialog(getShell(event),
-				repo, resources);
+		
+		CommitSelectionDialog dlg = new CommitSelectionDialog(getShell(event), repo);
 		if (dlg.open() != Window.OK)
 			return null;
 

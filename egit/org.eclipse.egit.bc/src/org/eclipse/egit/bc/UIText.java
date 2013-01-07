@@ -10,6 +10,10 @@ public class UIText extends NLS {
 	
 	public static String BeyondCompareEgit_ExecutablePath;
 	
+	public static String CompareWithHeadActionHandler_NoHeadTitle;
+			
+	public static String CompareWithHeadActionHandler_NoHeadMessage;
+	
 	static {
 		initializeMessages(BUNDLE_NAME, UIText.class);
 	}
