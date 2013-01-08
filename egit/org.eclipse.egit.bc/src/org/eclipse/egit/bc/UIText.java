@@ -14,6 +14,10 @@ public class UIText extends NLS {
 			
 	public static String CompareWithHeadActionHandler_NoHeadMessage;
 	
+	public static String CompareWithHeadActionHandler_onError;
+	
+	public static String CompareWithIndexActionHandler_onError;
+	
 	static {
 		initializeMessages(BUNDLE_NAME, UIText.class);
 	}

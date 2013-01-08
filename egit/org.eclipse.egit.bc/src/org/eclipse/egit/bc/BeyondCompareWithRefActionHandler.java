@@ -16,8 +16,6 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.egit.core.project.RepositoryMapping;
-import org.eclipse.egit.ui.Activator;
-import org.eclipse.egit.ui.UIText;
 import org.eclipse.egit.ui.internal.dialogs.CompareTargetSelectionDialog;
 import org.eclipse.egit.ui.internal.dialogs.CompareTreeView;
 import org.eclipse.jface.window.Window;
@@ -65,7 +63,7 @@ public class BeyondCompareWithRefActionHandler extends BeyondCompareRepositoryAc
 					BeyondCompareUtil.execBeyondCompare(leftFilePath, rightFilePath);
 
 				} catch (IOException e) {
-					Activator.handleError(UIText.CompareWithIndexAction_errorOnAddToIndex, e, true);
+					Activator.handleError(UIText.CompareWithIndexActionHandler_onError, e, true);
 					return null;
 				}
 				

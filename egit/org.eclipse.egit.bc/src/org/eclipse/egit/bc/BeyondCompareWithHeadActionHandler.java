@@ -16,7 +16,6 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.egit.core.project.RepositoryMapping;
-import org.eclipse.egit.ui.Activator;
 import org.eclipse.egit.ui.internal.dialogs.CompareTreeView;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jgit.errors.IncorrectObjectTypeException;
@@ -60,16 +59,14 @@ public class BeyondCompareWithHeadActionHandler extends BeyondCompareRepositoryA
 				String leftFilePath = baseFile.getLocation().toFile().getAbsolutePath();
 				BeyondCompareUtil.execBeyondCompare(leftFilePath, rightFilePath);
 			} catch (Exception e) {
-				e.printStackTrace();
+				Activator.handleError(UIText.CompareWithHeadActionHandler_onError, e, true);
 			}
 			return null;
 
 		} else {
 			CompareTreeView view;
 			try {
-				view = (CompareTreeView) PlatformUI.getWorkbench()
-						.getActiveWorkbenchWindow().getActivePage().showView(
-								CompareTreeView.ID);
+				view = (CompareTreeView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(CompareTreeView.ID);
 				try {
 					Ref head = repository.getRef(Constants.HEAD);
 					if (head == null || head.getObjectId() == null) {

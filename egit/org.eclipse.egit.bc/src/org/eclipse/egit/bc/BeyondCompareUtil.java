@@ -147,12 +147,12 @@ public class BeyondCompareUtil {
 				// File's last modified date is older than the given date, so
 				// overwrite
 				readAndWriteString(is, encoding, outputFile, monitor, true /* overwrite */);
-				System.out.println("Remote file is newer than the cached version, updating."); //$NON-NLS-1$
+//				System.out.println("Remote file is newer than the cached version, updating."); //$NON-NLS-1$
 				wrote = true;
 			} else {
 				// remote file revision date is older than the cached file's
 				// last modified date
-				System.out.println("Remote file already exists."); //$NON-NLS-1$
+//				System.out.println("Remote file already exists."); //$NON-NLS-1$
 			}
 		}
 		return wrote;
@@ -220,7 +220,7 @@ public class BeyondCompareUtil {
 					monitor.worked(read);
 				}
 			} else {
-				System.out.println("Output file already exists (" + outputFile.getCanonicalPath() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+//				System.out.println("Output file already exists (" + outputFile.getCanonicalPath() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} finally {
 			monitor.done();
@@ -259,7 +259,7 @@ public class BeyondCompareUtil {
 					content, fileName, commit, encoding, tmpDir, true, null);
 			return tmpFilePath;
 		} catch (Exception e) {
-			e.printStackTrace();
+			Activator.logError("Error while getting file revision to compare", e);
 			return null;
 		}
 	}
