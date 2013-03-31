@@ -17,7 +17,7 @@
 	
 	<build>
 		<plugins>
-		
+			<!--
 			<plugin>
 				<groupId>com.pyx4me</groupId>
 				<artifactId>proguard-maven-plugin</artifactId>
@@ -37,8 +37,10 @@
 					<outputDirectory>${project.build.directory}</outputDirectory>
 					<proguardInclude>${basedir}/proguard.conf</proguardInclude>
 					<options>
+					-->
 						<!-- Keeps 4 All public classes the public fields/members
 						 Keep in mind that its best that only the entry points are public -->
+						<!--
 						<option>-keep public class * { public *;}</option>
 						<option>-keep public class Main 
 								{
@@ -55,7 +57,7 @@
 					</libs>
 				</configuration>
 			</plugin>
-		
+		-->
 		
 		</plugins>
 	
