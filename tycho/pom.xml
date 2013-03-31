@@ -27,6 +27,7 @@
     	<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
     	<sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
     	<sonar.surefire.reportsPath>../${project.artifactId}.utest/target/surefire-reports/</sonar.surefire.reportsPath>
+    	<sonar.skippedModules>bundleB.utest,bundleD.test</sonar.skippedModules>
 	</properties>
 	
 	<dependencies>
