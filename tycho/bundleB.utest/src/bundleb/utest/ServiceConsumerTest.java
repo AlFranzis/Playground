@@ -14,4 +14,8 @@ public class ServiceConsumerTest {
 		String msg = serviceConsumer.getMessage("Alex");
 		Assert.assertNotNull(msg);
 	}
+	
+	public void testFoo() {
+		System.out.println("testFoo()");
+	}
 }

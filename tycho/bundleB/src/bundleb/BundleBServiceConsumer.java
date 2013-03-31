@@ -11,4 +11,10 @@ public class BundleBServiceConsumer
         return bundleAService.getMessage( name );
     }
     
+    @Override
+    public String toString()
+    {
+    	return "BundleBServiceConsumer";
+    }
+    
 }

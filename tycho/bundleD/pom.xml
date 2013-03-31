@@ -14,7 +14,9 @@
 	<artifactId>bundleD</artifactId>
 	<version>1.0.0.qualifier</version>
 	<packaging>eclipse-plugin</packaging>
-	
+	<properties>
+		<sonar.surefire.reportsPath>../${project.artifactId}.test/target/surefire-reports/</sonar.surefire.reportsPath>
+	</properties>
 	<build>
 		<plugins>
 			<plugin>
