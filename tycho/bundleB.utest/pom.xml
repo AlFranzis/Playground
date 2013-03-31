@@ -10,7 +10,7 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<groupId>al.franzis</groupId>
-	<artifactId>bundleB</artifactId>
+	<artifactId>bundleB.utest</artifactId>
 	<version>1.0.0.qualifier</version>
-	<packaging>eclipse-plugin</packaging>
+	<packaging>eclipse-test-plugin</packaging>
 </project>

@@ -10,6 +10,7 @@
 		
 		<module>bundleA</module>
 		<module>bundleB</module>
+		<module>bundleB.utest</module>
 		<!--
 		<module>bundleC</module>
 		-->

@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: bundleB.utest
+Bundle-SymbolicName: bundleB.utest
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: bundleB
+Require-Bundle: org.junit
